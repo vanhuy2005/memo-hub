@@ -124,12 +124,21 @@ export const studyService = {
   },
 
   reviewCard: async (cardId, grade) => {
-    const response = await api.post(`/study/review/${cardId}`, { grade });
+    // Get user's timezone offset (e.g., Vietnam = 7, US-EST = -5)
+    const timezoneOffset = -new Date().getTimezoneOffset() / 60;
+    const response = await api.post(`/study/review/${cardId}`, {
+      grade,
+      timezoneOffset,
+    });
     return response.data;
   },
 
   getStudyStats: async () => {
-    const response = await api.get("/study/stats");
+    // Get user's timezone offset for accurate "today" calculation
+    const timezoneOffset = -new Date().getTimezoneOffset() / 60;
+    const response = await api.get(
+      `/study/stats?timezoneOffset=${timezoneOffset}`
+    );
     return response.data;
   },
 };

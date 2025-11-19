@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { deckService } from "../services";
 import BottomNav from "../components/BottomNav";
 import { useTranslation } from "react-i18next";
+import { motion } from "framer-motion";
 import {
   LayoutDashboard,
   Settings,
@@ -10,6 +11,9 @@ import {
   ChevronRight,
   Search,
   Plus,
+  BookOpen,
+  Globe,
+  Sparkles,
 } from "lucide-react";
 
 export default function Decks() {
@@ -48,90 +52,120 @@ export default function Decks() {
   );
 
   return (
-    <div className="relative flex min-h-screen w-full flex-col font-display bg-background-light dark:bg-background-dark overflow-x-hidden">
-      {/* Top App Bar */}
-      <header className="flex items-center bg-background-light dark:bg-background-dark p-4 pb-3 justify-between sticky top-0 z-10 backdrop-blur-md bg-opacity-95 border-b border-gray-200 dark:border-gray-800">
-        <h1 className="text-2xl font-bold leading-tight tracking-[-0.015em] flex-1 text-gray-900 dark:text-white flex items-center gap-2">
-          <LayoutDashboard
-            size={32}
-            className="text-green-600 dark:text-green-400"
-            strokeWidth={2}
-          />
+    <div className="relative flex min-h-screen w-full flex-col font-display bg-surface-cream dark:bg-background-dark overflow-x-hidden">
+      {/* 🌸 Kawaii Header */}
+      <header className="flex items-center bg-white/60 dark:bg-background-dark/60 backdrop-blur-xl p-4 pb-3 justify-between sticky top-0 z-10 border-b-2 border-primary/20">
+        <h1 className="text-2xl font-bold leading-tight tracking-[-0.015em] flex-1 text-text-dark dark:text-white flex items-center gap-3">
+          <motion.div
+            className="flex items-center justify-center w-12 h-12 rounded-2xl bg-gradient-to-br from-primary to-primary-dark shadow-solid-primary"
+            whileHover={{ scale: 1.1, rotate: 5 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <LayoutDashboard
+              size={28}
+              className="text-white"
+              strokeWidth={2.5}
+            />
+          </motion.div>
           {t("nav.decks")}
         </h1>
         <Link
           to="/settings"
-          className="flex items-center justify-center rounded-full h-10 w-10 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+          className="flex items-center justify-center rounded-2xl h-12 w-12 bg-gray-100/80 dark:bg-gray-800/80 hover:bg-gray-200 dark:hover:bg-gray-700 transition-all hover:shadow-solid"
         >
           <Settings
-            size={24}
+            size={22}
             className="text-gray-700 dark:text-gray-300"
             strokeWidth={2}
           />
         </Link>
       </header>
 
-      {/* Tabs */}
-      <div className="px-4 pt-3 space-y-3">
-        <div className="flex gap-2 bg-gray-100 dark:bg-gray-800 p-1 rounded-lg">
+      {/* 🎨 Kawaii Tabs */}
+      <div className="px-4 pt-4 space-y-4">
+        <div className="flex gap-3 bg-white/60 dark:bg-gray-800/60 backdrop-blur-md p-1.5 rounded-5xl shadow-solid-sm border-2 border-white dark:border-gray-700">
           <button
             onClick={() => setActiveTab("my")}
-            className={`flex-1 py-2 px-4 rounded-md font-medium transition-colors ${
+            className={`flex-1 py-3 px-5 rounded-4xl font-bold transition-all duration-300 ${
               activeTab === "my"
-                ? "bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm"
-                : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
+                ? "bg-primary text-white shadow-solid-primary scale-105"
+                : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100/50"
             }`}
           >
-            {t("decks.myDecks")}
+            <span className="flex items-center justify-center gap-2">
+              <BookOpen size={18} strokeWidth={2.5} />
+              {t("decks.myDecks")}
+            </span>
           </button>
           <button
             onClick={() => setActiveTab("public")}
-            className={`flex-1 py-2 px-4 rounded-md font-medium transition-colors ${
+            className={`flex-1 py-3 px-5 rounded-4xl font-bold transition-all duration-300 ${
               activeTab === "public"
-                ? "bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm"
-                : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white"
+                ? "bg-accent text-white shadow-solid-accent scale-105"
+                : "text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100/50"
             }`}
           >
-            {t("systemDecks.subtitle")}
+            <span className="flex items-center justify-center gap-2">
+              <Globe size={18} strokeWidth={2.5} />
+              {t("systemDecks.subtitle")}
+            </span>
           </button>
         </div>
 
-        {/* System Decks Link */}
-        <Link
-          to="/system-decks"
-          className="flex items-center gap-3 px-5 py-4 bg-green-50 dark:from-green-900/20 rounded-2xl hover:shadow-lg transition-all border-2 border-green-200 dark:border-green-800"
+        {/* 🎁 System Decks Link - Kawaii Style */}
+        <motion.div
+          whileHover={{ scale: 1.02, y: -2 }}
+          whileTap={{ scale: 0.98 }}
         >
-          <div className="flex items-center justify-center w-12 h-12 bg-green-600 rounded-xl">
-            <Package size={28} className="text-white" strokeWidth={2} />
-          </div>
-          <div className="flex-1">
-            <p className="font-bold text-gray-900 dark:text-white text-base">
-              {t("systemDecks.title")}
-            </p>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
-              IELTS • JLPT • TOPIK • HSK
-            </p>
-          </div>
-          <ChevronRight size={20} className="text-gray-500" strokeWidth={2} />
-        </Link>
+          <Link
+            to="/system-decks"
+            className="flex items-center gap-4 px-5 py-5 bg-gradient-to-br from-secondary-light to-secondary rounded-4xl hover:shadow-solid-secondary transition-all border-3 border-white dark:border-gray-700 shadow-solid"
+          >
+            <motion.div
+              className="flex items-center justify-center w-16 h-16 bg-white rounded-3xl shadow-solid-sm"
+              animate={{ rotate: [0, -5, 5, 0] }}
+              transition={{ duration: 2, repeat: Infinity }}
+            >
+              <Package size={32} className="text-secondary" strokeWidth={2.5} />
+            </motion.div>
+            <div className="flex-1">
+              <p className="font-bold text-text-dark dark:text-white text-lg flex items-center gap-2">
+                {t("systemDecks.title")}
+                <Sparkles size={18} className="text-yellow-500 animate-pulse" />
+              </p>
+              <p className="text-sm text-text-secondary font-semibold mt-1">
+                IELTS • JLPT • TOPIK • HSK
+              </p>
+            </div>
+            <ChevronRight
+              size={24}
+              className="text-text-secondary"
+              strokeWidth={2.5}
+            />
+          </Link>
+        </motion.div>
       </div>
 
-      {/* Search Bar */}
+      {/* 🔍 Kawaii Search Bar */}
       <div className="px-4 py-3">
-        <label className="flex flex-col min-w-40 h-12 w-full">
-          <div className="flex w-full flex-1 items-stretch rounded-full h-full shadow-sm">
-            <div className="text-gray-500 dark:text-gray-400 flex border-none bg-white dark:bg-gray-800 items-center justify-center pl-4 rounded-l-full border-r-0">
-              <Search size={20} strokeWidth={2} />
+        <motion.div
+          initial={{ scale: 0.95, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          className="relative"
+        >
+          <div className="flex items-center rounded-pill h-14 shadow-solid border-2 border-white dark:border-gray-700 bg-white/80 dark:bg-gray-800/80 backdrop-blur-md overflow-hidden">
+            <div className="flex items-center justify-center w-14 h-14 text-primary">
+              <Search size={22} strokeWidth={2.5} />
             </div>
             <input
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-r-full text-gray-900 dark:text-white focus:outline-0 focus:ring-0 border-none bg-white dark:bg-gray-800 focus:border-none h-full placeholder:text-gray-500 dark:placeholder:text-gray-400 px-4 pl-2 text-base font-normal leading-normal"
+              className="flex-1 h-full bg-transparent border-none focus:outline-none focus:ring-0 text-text-dark dark:text-white placeholder:text-gray-400 text-base font-semibold"
               placeholder={t("common.search")}
             />
           </div>
-        </label>
+        </motion.div>
       </div>
 
       {/* Deck List */}
@@ -147,43 +181,96 @@ export default function Decks() {
             </p>
           </div>
         ) : (
-          filteredDecks.map((deck) => {
+          filteredDecks.map((deck, index) => {
             const progress = deck.card_count > 0 ? 0 : 0; // TODO: Calculate actual progress
+
+            // 🎨 Kawaii icon colors rotation
+            const iconColors = [
+              {
+                bg: "bg-primary/20",
+                icon: "text-primary",
+                shadow: "shadow-solid-primary",
+              },
+              {
+                bg: "bg-secondary/20",
+                icon: "text-secondary",
+                shadow: "shadow-solid-secondary",
+              },
+              {
+                bg: "bg-accent/20",
+                icon: "text-accent",
+                shadow: "shadow-solid-accent",
+              },
+              { bg: "bg-info/20", icon: "text-info", shadow: "shadow-solid" },
+            ];
+            const colorScheme = iconColors[index % iconColors.length];
+
             return (
-              <Link
+              <motion.div
                 key={deck._id}
-                to={`/decks/${deck._id}`}
-                className="flex flex-col items-stretch justify-start rounded-xl shadow-[0_4px_12px_rgba(0,0,0,0.05)] bg-white dark:bg-gray-800 p-4 hover:shadow-lg transition-shadow"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1 }}
+                whileHover={{ scale: 1.02, y: -4 }}
+                whileTap={{ scale: 0.98 }}
               >
-                <div className="flex w-full flex-col items-stretch justify-center gap-2">
-                  <p className="text-gray-900 dark:text-white text-lg font-bold leading-tight tracking-[-0.015em]">
-                    {deck.name}
-                  </p>
-                  <p className="text-gray-600 dark:text-gray-300 text-sm font-normal leading-normal">
-                    Đã học: 0/{deck.card_count}
-                  </p>
-                  <div className="flex flex-col gap-1 pt-1">
-                    <div className="rounded-full bg-gray-200 dark:bg-gray-700">
-                      <div
-                        className="h-2 rounded-full bg-primary"
-                        style={{ width: `${progress}%` }}
-                      ></div>
+                <Link
+                  to={`/decks/${deck._id}`}
+                  className="flex items-center gap-4 rounded-4xl bg-white dark:bg-gray-800 p-5 hover:shadow-solid-lg transition-all border-2 border-white dark:border-gray-700 shadow-solid"
+                >
+                  {/* 🌸 Kawaii Icon Circle */}
+                  <motion.div
+                    className={`flex items-center justify-center w-16 h-16 rounded-3xl ${colorScheme.bg} ${colorScheme.shadow}`}
+                    whileHover={{ rotate: 360 }}
+                    transition={{ duration: 0.6 }}
+                  >
+                    <BookOpen
+                      size={28}
+                      className={colorScheme.icon}
+                      strokeWidth={2.5}
+                    />
+                  </motion.div>
+
+                  <div className="flex-1 min-w-0">
+                    <p className="text-text-dark dark:text-white text-lg font-bold leading-tight tracking-tight truncate">
+                      {deck.name}
+                    </p>
+                    <p className="text-text-secondary text-sm font-semibold mt-1">
+                      {deck.card_count} thẻ
+                    </p>
+
+                    {/* 🌈 Kawaii Progress Bar - Gradient & Thicker */}
+                    <div className="flex flex-col gap-1 mt-3">
+                      <div className="h-3 rounded-pill bg-gray-200 dark:bg-gray-700 overflow-hidden shadow-inner">
+                        <motion.div
+                          className="h-full rounded-pill bg-gradient-to-r from-primary via-accent-blue to-secondary"
+                          initial={{ width: 0 }}
+                          animate={{ width: `${progress}%` }}
+                          transition={{ duration: 1, ease: "easeOut" }}
+                        />
+                      </div>
                     </div>
                   </div>
-                </div>
-              </Link>
+                </Link>
+              </motion.div>
             );
           })
         )}
       </main>
 
-      {/* Floating Action Button (FAB) */}
-      <Link
-        to="/decks/create"
-        className="fixed bottom-24 right-6 flex h-16 w-16 cursor-pointer items-center justify-center rounded-full bg-green-600 hover:bg-green-700 text-white shadow-lg hover:shadow-xl transition-all z-40"
+      {/* 🌸 Kawaii FAB - Solid Shadow Style */}
+      <motion.div
+        className="fixed bottom-28 right-6 z-40"
+        whileHover={{ scale: 1.1, rotate: 90 }}
+        whileTap={{ scale: 0.9 }}
       >
-        <Plus size={32} strokeWidth={2} />
-      </Link>
+        <Link
+          to="/decks/create"
+          className="flex h-16 w-16 items-center justify-center rounded-3xl bg-gradient-to-br from-primary to-primary-dark text-white shadow-solid-primary-hover border-2 border-white hover:shadow-solid-primary transition-all"
+        >
+          <Plus size={36} strokeWidth={3} />
+        </Link>
+      </motion.div>
 
       <BottomNav />
     </div>

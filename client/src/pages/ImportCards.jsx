@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useToast } from "../contexts/ToastContext";
+import { useToast } from "../hooks/useToast";
 import { cardService } from "../services";
+import { motion } from "framer-motion";
+import { ArrowLeft, Upload, FileText, Sparkles, Package } from "lucide-react";
 
 export default function ImportCards() {
   const { deckId } = useParams();
@@ -32,6 +34,23 @@ export default function ImportCards() {
       parseCSV(text);
     };
     reader.readAsText(selectedFile);
+  };
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.1, delayChildren: 0.2 },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: { type: "spring", stiffness: 200, damping: 20 },
+    },
   };
 
   const parseCSV = (text) => {
@@ -112,37 +131,81 @@ export default function ImportCards() {
   };
 
   return (
-    <div className="relative flex min-h-screen w-full flex-col font-display bg-background-light dark:bg-background-dark overflow-x-hidden">
+    <motion.div
+      className="relative flex min-h-screen w-full flex-col font-display bg-[#FEFBF6] dark:bg-[#2D2A32] overflow-x-hidden pb-24"
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+    >
+      {/* Floating Emojis */}
+      {["📁", "✨", "📤", "💾", "🎴", "🌟"].map((emoji, i) => (
+        <motion.div
+          key={i}
+          className="absolute text-4xl opacity-20 pointer-events-none"
+          style={{
+            top: `${Math.random() * 80 + 10}%`,
+            left: `${Math.random() * 90 + 5}%`,
+          }}
+          animate={{
+            y: [0, -20, 0],
+            rotate: [0, 360],
+            opacity: [0.2, 0.4, 0.2],
+          }}
+          transition={{
+            duration: 4 + i,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        >
+          {emoji}
+        </motion.div>
+      ))}
+
       {/* Header */}
-      <header className="sticky top-0 z-10 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-sm border-b border-gray-200 dark:border-gray-800">
+      <motion.header
+        variants={itemVariants}
+        className="sticky top-0 z-10 bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl border-b-4 border-white/50 dark:border-purple-700/30 shadow-soft"
+      >
         <div className="flex items-center p-4 justify-between">
-          <button
+          <motion.button
             onClick={() => navigate(`/decks/${deckId}`)}
-            className="text-gray-800 dark:text-gray-200 flex size-10 shrink-0 items-center justify-center rounded-full hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
+            className="flex size-12 shrink-0 items-center justify-center rounded-full hover:bg-purple-100 dark:hover:bg-purple-900/30 transition-colors"
+            whileHover={{ scale: 1.1, rotate: -10 }}
+            whileTap={{ scale: 0.9 }}
           >
-            <span className="material-symbols-outlined text-2xl">
-              arrow_back
-            </span>
-          </button>
-          <h1 className="text-lg lg:text-xl font-bold leading-tight tracking-[-0.015em] flex-1 text-center text-gray-900 dark:text-white pr-10">
+            <ArrowLeft className="text-primary" size={24} strokeWidth={2.5} />
+          </motion.button>
+          <h1 className="text-2xl font-black text-gray-900 dark:text-white flex items-center gap-2">
+            <Package className="text-green-500" size={28} strokeWidth={2.5} />
             Nhập thẻ từ File
           </h1>
+          <div className="w-12"></div>
         </div>
-      </header>
+      </motion.header>
 
       {/* Main Content */}
-      <main className="flex-1 max-w-3xl mx-auto w-full p-4 lg:p-6 space-y-6">
+      <main className="relative z-10 flex-1 max-w-3xl mx-auto w-full p-4 lg:p-6 space-y-6">
         {/* Instructions */}
-        <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl p-4">
-          <h3 className="font-bold text-blue-900 dark:text-blue-300 mb-2 flex items-center gap-2">
-            <span className="material-symbols-outlined">info</span>
-            Hướng dẫn định dạng file
-          </h3>
-          <ul className="text-sm text-blue-800 dark:text-blue-200 space-y-1">
+        <motion.div
+          variants={itemVariants}
+          className="bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 border-4 border-blue-200 dark:border-blue-800 rounded-[24px] p-6 shadow-pop"
+        >
+          <div className="flex items-center gap-3 mb-4">
+            <motion.div
+              animate={{ rotate: [0, 10, -10, 0] }}
+              transition={{ duration: 2, repeat: Infinity }}
+            >
+              <Sparkles className="text-blue-500" size={28} strokeWidth={2.5} />
+            </motion.div>
+            <h3 className="font-black text-blue-900 dark:text-blue-300 text-lg">
+              Hướng dẫn định dạng file
+            </h3>
+          </div>
+          <ul className="text-sm font-semibold text-blue-800 dark:text-blue-200 space-y-2">
             <li>• Mỗi dòng là một thẻ</li>
             <li>
               • Định dạng:{" "}
-              <code className="bg-blue-100 dark:bg-blue-900 px-2 py-0.5 rounded">
+              <code className="bg-blue-100 dark:bg-blue-900 px-3 py-1 rounded-full font-bold">
                 Mặt trước, Mặt sau, Phiên âm (tùy chọn), Ví dụ (tùy chọn)
               </code>
             </li>
@@ -152,25 +215,38 @@ export default function ImportCards() {
             </li>
             <li>
               • Ví dụ:{" "}
-              <code className="bg-blue-100 dark:bg-blue-900 px-2 py-0.5 rounded">
+              <code className="bg-blue-100 dark:bg-blue-900 px-3 py-1 rounded-full font-bold">
                 Hello, Xin chào, /həˈloʊ/, Hello everyone!
               </code>
             </li>
           </ul>
-        </div>
+        </motion.div>
 
         {/* File Upload */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
-          <label className="flex flex-col items-center justify-center w-full h-48 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+        <motion.div
+          variants={itemVariants}
+          className="bg-white dark:bg-gray-800 rounded-[32px] shadow-pop border-4 border-white/50 dark:border-purple-700/30 p-8"
+        >
+          <motion.label
+            className="flex flex-col items-center justify-center w-full h-56 border-8 border-dashed border-primary/50 dark:border-primary/40 rounded-[24px] cursor-pointer hover:bg-purple-50 dark:hover:bg-purple-900/20 transition-all"
+            whileHover={{ scale: 1.01, borderColor: "#a855f7" }}
+          >
             <div className="flex flex-col items-center justify-center py-4">
-              <span className="material-symbols-outlined text-5xl text-gray-400 dark:text-gray-500 mb-3">
-                upload_file
-              </span>
-              <p className="text-sm text-gray-600 dark:text-gray-400 font-medium">
-                {file ? file.name : "Nhấp để chọn file CSV hoặc TXT"}
+              <motion.div
+                animate={{ y: [0, -12, 0] }}
+                transition={{
+                  duration: 1.5,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
+              >
+                <Upload className="text-primary" size={72} strokeWidth={2.5} />
+              </motion.div>
+              <p className="text-base font-black text-gray-900 dark:text-white mt-6">
+                {file ? "📄 File đã chọn" : "Kéo thả file CSV hoặc TXT vào đây"}
               </p>
-              <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">
-                Hỗ trợ file .csv và .txt
+              <p className="text-sm font-semibold text-gray-500 dark:text-gray-400 mt-2">
+                Hoặc nhấp để chọn file
               </p>
             </div>
             <input
@@ -179,62 +255,124 @@ export default function ImportCards() {
               onChange={handleFileChange}
               className="hidden"
             />
-          </label>
-        </div>
+          </motion.label>
+
+          {/* File Chip */}
+          {file && (
+            <motion.div
+              className="flex items-center justify-center gap-3 mt-6 px-6 py-3 bg-gradient-to-r from-green-400 to-emerald-400 text-white rounded-full shadow-glow font-bold"
+              initial={{ scale: 0, rotate: -180 }}
+              animate={{ scale: 1, rotate: 0 }}
+              transition={{ type: "spring", stiffness: 300, damping: 20 }}
+            >
+              <FileText size={20} strokeWidth={2.5} />
+              <span>{file.name}</span>
+              <motion.span
+                animate={{ scale: [1, 1.3, 1] }}
+                transition={{ duration: 1, repeat: Infinity }}
+              >
+                ✨
+              </motion.span>
+            </motion.div>
+          )}
+        </motion.div>
 
         {/* Preview */}
         {preview.length > 0 && (
-          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6">
-            <h3 className="text-gray-900 dark:text-gray-100 text-base font-bold mb-4">
-              Xem trước (5 thẻ đầu tiên)
-            </h3>
-            <div className="space-y-3">
+          <motion.div
+            variants={itemVariants}
+            className="bg-white dark:bg-gray-800 rounded-[32px] shadow-pop border-4 border-white/50 dark:border-purple-700/30 p-8"
+          >
+            <div className="flex items-center gap-3 mb-6">
+              <motion.div
+                animate={{ scale: [1, 1.2, 1] }}
+                transition={{ duration: 2, repeat: Infinity }}
+              >
+                <Sparkles
+                  className="text-yellow-500"
+                  size={28}
+                  strokeWidth={2.5}
+                />
+              </motion.div>
+              <h3 className="text-gray-900 dark:text-gray-100 text-xl font-black">
+                Xem trước (5 thẻ đầu tiên) 👀
+              </h3>
+            </div>
+            <div className="space-y-4">
               {preview.map((card, idx) => (
-                <div
+                <motion.div
                   key={idx}
-                  className="border border-gray-200 dark:border-gray-700 rounded-lg p-3"
+                  className="border-4 border-purple-200 dark:border-purple-700 rounded-[20px] p-5 bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20"
+                  initial={{ scale: 0, rotate: -5 }}
+                  animate={{ scale: 1, rotate: 0 }}
+                  transition={{ delay: idx * 0.1 }}
+                  whileHover={{ scale: 1.02, y: -3 }}
                 >
-                  <div className="grid grid-cols-2 gap-3 text-sm">
+                  <div className="grid grid-cols-2 gap-4 text-sm">
                     <div>
-                      <p className="text-gray-500 dark:text-gray-400 text-xs mb-1">
-                        Mặt trước
+                      <p className="text-purple-600 dark:text-purple-400 text-xs font-black mb-2">
+                        🎴 Mặt trước
                       </p>
-                      <p className="text-gray-900 dark:text-gray-100 font-medium">
+                      <p className="text-gray-900 dark:text-gray-100 font-bold">
                         {card.front}
                       </p>
                     </div>
                     <div>
-                      <p className="text-gray-500 dark:text-gray-400 text-xs mb-1">
-                        Mặt sau
+                      <p className="text-pink-600 dark:text-pink-400 text-xs font-black mb-2">
+                        📝 Mặt sau
                       </p>
-                      <p className="text-gray-900 dark:text-gray-100 font-medium">
+                      <p className="text-gray-900 dark:text-gray-100 font-bold">
                         {card.back}
                       </p>
                     </div>
                   </div>
                   {(card.pronunciation || card.example) && (
-                    <div className="mt-2 pt-2 border-t border-gray-100 dark:border-gray-700 text-xs text-gray-600 dark:text-gray-400">
+                    <div className="mt-3 pt-3 border-t-2 border-purple-200 dark:border-purple-700 text-xs font-semibold text-gray-700 dark:text-gray-300 space-y-1">
                       {card.pronunciation && (
-                        <p>Phiên âm: {card.pronunciation}</p>
+                        <p>🔊 Phiên âm: {card.pronunciation}</p>
                       )}
-                      {card.example && <p>Ví dụ: {card.example}</p>}
+                      {card.example && <p>💬 Ví dụ: {card.example}</p>}
                     </div>
                   )}
-                </div>
+                </motion.div>
               ))}
             </div>
-          </div>
+          </motion.div>
         )}
 
         {/* Import Button */}
-        <button
+        <motion.button
           onClick={handleImport}
           disabled={!file || importing}
-          className="w-full py-4 bg-primary text-gray-900 rounded-full font-bold text-base hover:opacity-90 transition-opacity shadow-lg shadow-primary/30 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full h-16 rounded-full bg-gradient-to-r from-[#88D8B0] via-[#FFB7B2] to-[#E0BBE4] text-white font-black text-lg shadow-glow disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
+          variants={itemVariants}
+          whileHover={{ scale: 1.02, y: -3 }}
+          whileTap={{ scale: 0.98 }}
         >
-          {importing ? "Đang nhập..." : "Nhập thẻ vào bộ từ"}
-        </button>
+          {importing ? (
+            <>
+              <motion.div
+                animate={{ rotate: 360 }}
+                transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+              >
+                <Sparkles size={24} strokeWidth={2.5} />
+              </motion.div>
+              <span>Đang nhập...</span>
+            </>
+          ) : (
+            <>
+              <Package size={24} strokeWidth={2.5} />
+              <span>Nhập thẻ vào bộ từ</span>
+              <motion.span
+                animate={{ scale: [1, 1.3, 1] }}
+                transition={{ duration: 1.5, repeat: Infinity }}
+              >
+                ✨
+              </motion.span>
+            </>
+          )}
+        </motion.button>
       </main>
-    </div>
+    </motion.div>
   );
 }

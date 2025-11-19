@@ -1,15 +1,8 @@
-import { createContext, useContext, useState, useCallback } from "react";
+import { createContext, useState, useCallback } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import Toast from "../components/Toast";
 
-const ToastContext = createContext();
-
-export const useToast = () => {
-  const context = useContext(ToastContext);
-  if (!context) {
-    throw new Error("useToast must be used within ToastProvider");
-  }
-  return context;
-};
+export const ToastContext = createContext();
 
 export const ToastProvider = ({ children }) => {
   const [toasts, setToasts] = useState([]);
@@ -46,18 +39,22 @@ export const ToastProvider = ({ children }) => {
   return (
     <ToastContext.Provider value={{ showToast, success, error, warning, info }}>
       {children}
-      <div className="fixed top-0 right-0 z-[9999] pointer-events-none">
-        <div className="flex flex-col gap-3 p-4 pointer-events-auto">
-          {toasts.map((toast) => (
-            <Toast
-              key={toast.id}
-              message={toast.message}
-              type={toast.type}
-              duration={toast.duration}
-              onClose={() => hideToast(toast.id)}
-            />
-          ))}
-        </div>
+
+      {/* Toast Container with AnimatePresence */}
+      <div className="fixed top-4 right-4 z-[99999] pointer-events-none">
+        <motion.div className="flex flex-col gap-3 pointer-events-auto" layout>
+          <AnimatePresence mode="popLayout">
+            {toasts.map((toast) => (
+              <Toast
+                key={toast.id}
+                message={toast.message}
+                type={toast.type}
+                duration={toast.duration}
+                onClose={() => hideToast(toast.id)}
+              />
+            ))}
+          </AnimatePresence>
+        </motion.div>
       </div>
     </ToastContext.Provider>
   );
