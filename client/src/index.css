@@ -1,12 +1,19 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
+  * {
+    @apply transition-colors duration-200;
+  }
+
   body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     min-height: 100dvh;
+    @apply font-display bg-surface-cream dark:bg-background-dark text-text-primary;
   }
 
   .material-symbols-outlined {
@@ -18,8 +25,66 @@
   }
 }
 
+@layer components {
+  /* Glassmorphism Card */
+  .glass-card {
+    @apply bg-white/60 dark:bg-white/10 backdrop-blur-xl border border-white/20 shadow-glass;
+  }
+
+  /* Cute Button */
+  .btn-cute {
+    @apply px-6 py-3 rounded-3xl font-bold shadow-pop hover:shadow-pop-hover 
+           transform hover:-translate-y-0.5 active:translate-y-0 
+           transition-all duration-200 ease-out;
+  }
+
+  .btn-primary {
+    @apply btn-cute bg-primary hover:bg-primary-hover text-white;
+  }
+
+  .btn-secondary {
+    @apply btn-cute bg-secondary hover:bg-secondary-dark text-white;
+  }
+
+  /* Floating Blob Background */
+  .blob {
+    @apply absolute rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-float;
+  }
+
+  /* Shimmer Effect */
+  .shimmer {
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.4),
+      transparent
+    );
+    background-size: 200% 100%;
+    @apply animate-shimmer;
+  }
+
+  /* Card Hover Effect */
+  .card-hover {
+    @apply transition-all duration-300 ease-out;
+  }
+
+  .card-hover:hover {
+    @apply scale-105 rotate-1 shadow-glow-lg;
+  }
+}
+
 @layer utilities {
   .text-balance {
     text-wrap: balance;
+  }
+
+  /* Gradient Text */
+  .gradient-text {
+    @apply bg-gradient-to-r from-primary via-secondary to-accent-lavender bg-clip-text text-transparent;
+  }
+
+  /* Glow Text */
+  .text-glow {
+    text-shadow: 0 0 10px rgba(136, 216, 176, 0.5);
   }
 }
