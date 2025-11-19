@@ -1,3 +1,4 @@
+import { lazy, Suspense } from "react";
 import {
   BrowserRouter as Router,
   Routes,
@@ -10,25 +11,28 @@ import { ToastProvider } from "./contexts/ToastContext";
 import ErrorBoundary from "./components/ErrorBoundary";
 import ProtectedRoute from "./components/ProtectedRoute";
 import BottomNav from "./components/BottomNav";
+import LoadingFallback from "./components/LoadingFallback";
 
-// Pages
+// Critical Pages (Load immediately)
 import Login from "./pages/Login";
 import Register from "./pages/Register";
-import Dashboard from "./pages/Dashboard";
-import Decks from "./pages/Decks";
-import CreateDeck from "./pages/CreateDeck";
-import DeckDetail from "./pages/DeckDetail";
-import CreateCard from "./pages/CreateCard";
-import ImportCards from "./pages/ImportCards";
-import SystemDecks from "./pages/SystemDecks";
-import StudySession from "./pages/StudySession";
-import Statistics from "./pages/Statistics";
-import Profile from "./pages/Profile";
-import Settings from "./pages/Settings";
-import ChangePassword from "./pages/ChangePassword";
-import About from "./pages/About";
-import Privacy from "./pages/Privacy";
-import Terms from "./pages/Terms";
+
+// Lazy Load Heavy Pages (Load on demand)
+const Dashboard = lazy(() => import("./pages/Dashboard"));
+const StudySession = lazy(() => import("./pages/StudySession"));
+const Decks = lazy(() => import("./pages/Decks"));
+const CreateDeck = lazy(() => import("./pages/CreateDeck"));
+const DeckDetail = lazy(() => import("./pages/DeckDetail"));
+const CreateCard = lazy(() => import("./pages/CreateCard"));
+const ImportCards = lazy(() => import("./pages/ImportCards"));
+const SystemDecks = lazy(() => import("./pages/SystemDecks"));
+const Statistics = lazy(() => import("./pages/Statistics"));
+const Profile = lazy(() => import("./pages/Profile"));
+const Settings = lazy(() => import("./pages/Settings"));
+const ChangePassword = lazy(() => import("./pages/ChangePassword"));
+const About = lazy(() => import("./pages/About"));
+const Privacy = lazy(() => import("./pages/Privacy"));
+const Terms = lazy(() => import("./pages/Terms"));
 
 function App() {
   return (
@@ -37,21 +41,22 @@ function App() {
         <ThemeProvider>
           <ToastProvider>
             <Router>
-              <Routes>
-                {/* Public Routes */}
-                <Route path="/login" element={<Login />} />
-                <Route path="/register" element={<Register />} />
+              <Suspense fallback={<LoadingFallback />}>
+                <Routes>
+                  {/* Public Routes */}
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/register" element={<Register />} />
 
-                {/* Protected Routes */}
-                <Route
-                  path="/dashboard"
-                  element={
-                    <ProtectedRoute>
-                      <Dashboard />
-                      <BottomNav />
-                    </ProtectedRoute>
-                  }
-                />
+                  {/* Protected Routes */}
+                  <Route
+                    path="/dashboard"
+                    element={
+                      <ProtectedRoute>
+                        <Dashboard />
+                        <BottomNav />
+                      </ProtectedRoute>
+                    }
+                  />
                 <Route
                   path="/decks"
                   element={
@@ -188,6 +193,7 @@ function App() {
                   element={<Navigate to="/dashboard" replace />}
                 />
               </Routes>
+              </Suspense>
             </Router>
           </ToastProvider>
         </ThemeProvider>

@@ -15,9 +15,25 @@ export default function Dashboard() {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showCelebration, setShowCelebration] = useState(false);
+  
+  // Animation State Management with SessionStorage
+  const [hasVisited, setHasVisited] = useState(() => {
+    return sessionStorage.getItem("dashboard_visited") === "true";
+  });
+
+  // Check for prefers-reduced-motion
+  const prefersReducedMotion = window.matchMedia(
+    "(prefers-reduced-motion: reduce)"
+  ).matches;
 
   useEffect(() => {
     loadStats();
+    
+    // Mark dashboard as visited
+    if (!hasVisited) {
+      sessionStorage.setItem("dashboard_visited", "true");
+      setHasVisited(true);
+    }
 
     // Check if coming from completed study session
     if (location.state?.sessionComplete) {
@@ -75,19 +91,24 @@ export default function Dashboard() {
     );
   }
 
+  // Conditional animation variants based on visit history and user preferences
   const containerVariants = {
-    hidden: { opacity: 0 },
+    hidden: { opacity: hasVisited || prefersReducedMotion ? 1 : 0 },
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.2,
+        staggerChildren: hasVisited || prefersReducedMotion ? 0 : 0.1,
+        delayChildren: hasVisited || prefersReducedMotion ? 0 : 0.2,
       },
     },
   };
 
   const itemVariants = {
-    hidden: { y: 20, opacity: 0, scale: 0.95 },
+    hidden: {
+      y: hasVisited || prefersReducedMotion ? 0 : 20,
+      opacity: hasVisited || prefersReducedMotion ? 1 : 0,
+      scale: hasVisited || prefersReducedMotion ? 1 : 0.95,
+    },
     visible: {
       y: 0,
       opacity: 1,

@@ -3,6 +3,7 @@ import Card from "../models/Card";
 import ReviewHistory from "../models/ReviewHistory";
 import { AuthRequest } from "../middlewares/auth.middleware";
 import { calculateNextReview, shuffleArray } from "../services/srsService";
+import gamificationService from "../services/gamificationService";
 
 // @desc    Lấy danh sách thẻ cần ôn tập hôm nay
 // @route   GET /api/study/session?deckId=xxx (optional)
@@ -122,6 +123,12 @@ export const reviewCard = async (
       interval_after: newSRSStatus.interval,
     });
 
+    // Gamification: Add XP for this review
+    const xpResult = await gamificationService.addXP(
+      userId as string,
+      grade === 0 ? 1 : grade === 1 ? 3 : grade === 2 ? 5 : 8
+    );
+
     res.status(200).json({
       success: true,
       message: "Card reviewed successfully",
@@ -131,6 +138,13 @@ export const reviewCard = async (
         new_ease_factor: newSRSStatus.ease_factor,
         next_review_at: newSRSStatus.next_review_at,
         grade_submitted: grade,
+        gamification: {
+          xp_gained: xpResult.xpGained,
+          total_xp: xpResult.newXP,
+          leveled_up: xpResult.leveledUp,
+          new_level: xpResult.newLevel,
+          xp_needed_for_next_level: xpResult.xpNeededForNextLevel,
+        },
       },
     });
   } catch (error: any) {
