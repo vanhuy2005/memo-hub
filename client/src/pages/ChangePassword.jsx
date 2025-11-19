@@ -68,7 +68,8 @@ export default function ChangePassword() {
       }, 2000);
     } catch (err) {
       setError(
-        err.response?.data?.message || "Đổi mật khẩu thất bại. Vui lòng thử lại."
+        err.response?.data?.message ||
+          "Đổi mật khẩu thất bại. Vui lòng thử lại."
       );
     } finally {
       setLoading(false);
@@ -99,7 +100,11 @@ export default function ChangePassword() {
           {/* Icon Header */}
           <div className="flex flex-col items-center space-y-3 pb-4">
             <div className="w-16 h-16 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center">
-              <Lock size={32} className="text-green-600 dark:text-green-400" strokeWidth={2} />
+              <Lock
+                size={32}
+                className="text-green-600 dark:text-green-400"
+                strokeWidth={2}
+              />
             </div>
             <p className="text-center text-sm text-gray-600 dark:text-gray-400">
               Nhập mật khẩu hiện tại và mật khẩu mới của bạn
@@ -142,7 +147,11 @@ export default function ChangePassword() {
                   onClick={() => setShowCurrentPassword(!showCurrentPassword)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
                 >
-                  {showCurrentPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                  {showCurrentPassword ? (
+                    <EyeOff size={20} />
+                  ) : (
+                    <Eye size={20} />
+                  )}
                 </button>
               </div>
             </div>
@@ -193,7 +202,11 @@ export default function ChangePassword() {
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
                 >
-                  {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                  {showConfirmPassword ? (
+                    <EyeOff size={20} />
+                  ) : (
+                    <Eye size={20} />
+                  )}
                 </button>
               </div>
             </div>
@@ -205,20 +218,44 @@ export default function ChangePassword() {
               </p>
               <ul className="text-sm text-blue-800 dark:text-blue-400 space-y-1">
                 <li className="flex items-center gap-2">
-                  <span className={formData.newPassword.length >= 6 ? "text-green-600" : ""}>
+                  <span
+                    className={
+                      formData.newPassword.length >= 6 ? "text-green-600" : ""
+                    }
+                  >
                     {formData.newPassword.length >= 6 ? "✓" : "○"}
                   </span>
                   Tối thiểu 6 ký tự
                 </li>
                 <li className="flex items-center gap-2">
-                  <span className={formData.newPassword === formData.confirmPassword && formData.confirmPassword ? "text-green-600" : ""}>
-                    {formData.newPassword === formData.confirmPassword && formData.confirmPassword ? "✓" : "○"}
+                  <span
+                    className={
+                      formData.newPassword === formData.confirmPassword &&
+                      formData.confirmPassword
+                        ? "text-green-600"
+                        : ""
+                    }
+                  >
+                    {formData.newPassword === formData.confirmPassword &&
+                    formData.confirmPassword
+                      ? "✓"
+                      : "○"}
                   </span>
                   Mật khẩu xác nhận khớp
                 </li>
                 <li className="flex items-center gap-2">
-                  <span className={formData.currentPassword && formData.newPassword !== formData.currentPassword ? "text-green-600" : ""}>
-                    {formData.currentPassword && formData.newPassword !== formData.currentPassword ? "✓" : "○"}
+                  <span
+                    className={
+                      formData.currentPassword &&
+                      formData.newPassword !== formData.currentPassword
+                        ? "text-green-600"
+                        : ""
+                    }
+                  >
+                    {formData.currentPassword &&
+                    formData.newPassword !== formData.currentPassword
+                      ? "✓"
+                      : "○"}
                   </span>
                   Khác mật khẩu hiện tại
                 </li>

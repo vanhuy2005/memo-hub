@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { useToast } from "../contexts/ToastContext";
 import { cardService } from "../services";
 
 export default function ImportCards() {
   const { deckId } = useParams();
   const navigate = useNavigate();
+  const { success, error, warning } = useToast();
   const [file, setFile] = useState(null);
   const [importing, setImporting] = useState(false);
   const [preview, setPreview] = useState([]);
@@ -17,7 +19,7 @@ export default function ImportCards() {
       !selectedFile.name.endsWith(".csv") &&
       !selectedFile.name.endsWith(".txt")
     ) {
-      alert("Vui lòng chọn file CSV hoặc TXT");
+      warning("⚠️ Vui lòng chọn file CSV hoặc TXT");
       return;
     }
 
@@ -56,7 +58,7 @@ export default function ImportCards() {
 
   const handleImport = async () => {
     if (!file) {
-      alert("Vui lòng chọn file");
+      error("✏️ Vui lòng chọn file");
       return;
     }
 
@@ -89,17 +91,21 @@ export default function ImportCards() {
           }
         }
 
-        alert(
-          `Nhập thành công ${successCount} thẻ${
-            errorCount > 0 ? `, ${errorCount} thẻ lỗi` : ""
-          }!`
-        );
-        navigate(`/decks/${deckId}`);
+        if (successCount > 0) {
+          success(
+            `✨ Nhập thành công ${successCount} thẻ${
+              errorCount > 0 ? `, ${errorCount} thẻ lỗi` : ""
+            }!`
+          );
+        } else {
+          error("😢 Không có thẻ nào được nhập thành công");
+        }
+        setTimeout(() => navigate(`/decks/${deckId}`), 500);
       };
       reader.readAsText(file);
-    } catch (error) {
-      console.error("Error importing cards:", error);
-      alert("Có lỗi xảy ra khi nhập thẻ");
+    } catch (err) {
+      console.error("Error importing cards:", err);
+      error("😢 Có lỗi xảy ra khi nhập thẻ");
     } finally {
       setImporting(false);
     }

@@ -223,6 +223,20 @@ export const getStudyStats = async (
         ? Math.round(totalReviews / Math.max(currentStreak || 1, 1))
         : 0;
 
+    // Cards studied today (reviews created today)
+    const todayStart = new Date();
+    todayStart.setHours(0, 0, 0, 0);
+    const todayEnd = new Date();
+    todayEnd.setHours(23, 59, 59, 999);
+
+    const cardsStudiedToday = await ReviewHistory.countDocuments({
+      user_id: userId,
+      review_date: {
+        $gte: todayStart,
+        $lte: todayEnd,
+      },
+    });
+
     res.status(200).json({
       success: true,
       data: {
@@ -231,8 +245,10 @@ export const getStudyStats = async (
           new_cards: newCards,
           learning_cards: learningCards,
           mastered_cards: masteredCards,
+          cards_due_today: dueToday,
           due_today: dueToday,
           due_next_week: dueNextWeek,
+          cards_studied_today: cardsStudiedToday,
           current_streak: currentStreak,
           longest_streak: longestStreak,
           weekly_activity: weeklyActivity,

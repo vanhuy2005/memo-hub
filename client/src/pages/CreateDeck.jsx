@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useToast } from "../contexts/ToastContext";
 import { deckService } from "../services";
 
 export default function CreateDeck() {
@@ -10,6 +11,7 @@ export default function CreateDeck() {
   });
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { success, error } = useToast();
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -23,17 +25,21 @@ export default function CreateDeck() {
     e.preventDefault();
 
     if (!formData.name.trim()) {
-      alert("Vui lòng nhập tên bộ từ");
+      error("✏️ Vui lòng nhập tên bộ từ");
       return;
     }
 
     setLoading(true);
     try {
       const data = await deckService.createDeck(formData);
-      navigate(`/decks/${data.data.deck._id}`);
-    } catch (error) {
-      console.error("Error creating deck:", error);
-      alert("Không thể tạo bộ từ. Vui lòng thử lại.");
+      success("✨ Tạo bộ từ thành công!");
+      setTimeout(() => navigate(`/decks/${data.data.deck._id}`), 500);
+    } catch (err) {
+      console.error("Error creating deck:", err);
+      error(
+        err.response?.data?.message ||
+          "😢 Không thể tạo bộ từ. Vui lòng thử lại."
+      );
     } finally {
       setLoading(false);
     }

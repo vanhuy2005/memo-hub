@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useToast } from "../contexts/ToastContext";
 import { systemDeckService } from "../services";
 import { useTranslation } from "react-i18next";
 import {
@@ -13,6 +14,7 @@ import {
 export default function SystemDecks() {
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const { success, error } = useToast();
   const [decks, setDecks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedLanguage, setSelectedLanguage] = useState("");
@@ -65,11 +67,14 @@ export default function SystemDecks() {
     setCopying(systemDeckId);
     try {
       const data = await systemDeckService.copySystemDeck(systemDeckId);
-      alert(`Đã sao chép ${data.data.card_count} thẻ vào bộ từ của bạn!`);
-      navigate(`/decks/${data.data.deck._id}`);
-    } catch (error) {
-      console.error("Error copying deck:", error);
-      alert("Không thể sao chép bộ từ. Vui lòng thử lại.");
+      success(`✨ Đã sao chép ${data.data.card_count} thẻ vào bộ từ của bạn!`);
+      setTimeout(() => navigate(`/decks/${data.data.deck._id}`), 500);
+    } catch (err) {
+      console.error("Error copying deck:", err);
+      error(
+        err.response?.data?.message ||
+          "😢 Không thể sao chép bộ từ. Vui lòng thử lại."
+      );
     } finally {
       setCopying(null);
     }
@@ -85,7 +90,7 @@ export default function SystemDecks() {
               onClick={() => navigate("/decks")}
               className="text-gray-800 dark:text-gray-200 flex size-10 shrink-0 items-center justify-center rounded-full hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
             >
-              <ArrowLeft size={24} strokeWidth={2} />
+              <ArrowLeft size={24} strokeWidth={2.5} />
             </button>
             <h1 className="text-lg lg:text-xl font-bold leading-tight tracking-[-0.015em] flex-1 text-center text-gray-900 dark:text-white pr-10">
               {t("systemDecks.title")}

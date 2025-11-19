@@ -52,12 +52,14 @@
 ## ✨ Features
 
 ### 🔐 Authentication & User Management
+
 - Secure JWT-based authentication with bcrypt hashing
 - User profile customization (learning target, daily goal, theme, language)
 - Change password functionality with validation
 - Session persistence and auto-login
 
 ### 📚 Deck & Card Management
+
 - Create unlimited custom decks with descriptions
 - Rich card editor: front/back content, pronunciation, example sentences
 - Import/Export cards (JSON format)
@@ -66,6 +68,7 @@
 - Deck-specific study sessions
 
 ### 🎓 Smart Study System
+
 - **SRS Algorithm**: SM-2 implementation with optimized intervals
 - 4-level review buttons: Again/Hard/Good/Easy
 - Real-time visual feedback with animations
@@ -74,6 +77,7 @@
 - Study from Dashboard (all decks) or specific deck
 
 ### 📊 Statistics & Analytics
+
 - Current streak and longest streak calculation
 - Daily/Weekly/Monthly review charts
 - Card distribution breakdown (New/Learning/Mastered)
@@ -82,13 +86,16 @@
 - Weekly activity heatmap
 
 ### 🌐 System Decks Library
+
 Pre-loaded vocabulary sets ready to copy:
+
 - **IELTS 6.0** - Essential academic vocabulary (20 cards)
 - **JLPT N5** - Basic Japanese fundamentals (20 cards)
 - **TOPIK I** - Korean essentials (20 cards)
 - **HSK 1** - Chinese basics (20 cards)
 
 ### 🎨 UI/UX Features
+
 - 🌙 Dark/Light theme toggle with system preference detection
 - 📱 Fully responsive design (mobile, tablet, desktop)
 - 🌍 Multi-language interface (Vietnamese, English, Chinese, Japanese, Korean)
@@ -101,6 +108,7 @@ Pre-loaded vocabulary sets ready to copy:
 ## 🛠 Tech Stack
 
 ### Frontend
+
 - **React 18.3** - Modern UI library with hooks
 - **Vite 5.4** - Lightning-fast build tool
 - **TailwindCSS 3.4** - Utility-first CSS
@@ -110,6 +118,7 @@ Pre-loaded vocabulary sets ready to copy:
 - **Axios** - HTTP client
 
 ### Backend
+
 - **Node.js 18+** - JavaScript runtime
 - **Express.js 4** - Minimal web framework
 - **TypeScript 5** - Type-safe development
@@ -119,6 +128,7 @@ Pre-loaded vocabulary sets ready to copy:
 - **bcrypt** - Password hashing (10 rounds)
 
 ### Development Tools
+
 - **ESLint** - Code quality and style enforcement
 - **Nodemon** - Auto-restart on file changes
 - **ts-node** - TypeScript execution for Node.js
@@ -138,12 +148,14 @@ Pre-loaded vocabulary sets ready to copy:
 ### Installation
 
 1. **Clone the repository**
+
    ```bash
    git clone https://github.com/vanhuy2005/memo-hub.git
    cd memo-hub
    ```
 
 2. **Install dependencies**
+
    ```bash
    # Install root dependencies
    npm install
@@ -161,6 +173,7 @@ Pre-loaded vocabulary sets ready to copy:
 3. **Configure environment variables**
 
    **Server** - Create `server/.env`:
+
    ```env
    PORT=5000
    MONGODB_URI=mongodb://localhost:27017/memohub
@@ -170,11 +183,13 @@ Pre-loaded vocabulary sets ready to copy:
    ```
 
    **Client** - Create `client/.env`:
+
    ```env
    VITE_API_URL=http://localhost:5000/api
    ```
 
 4. **Start MongoDB**
+
    ```bash
    # Windows
    net start MongoDB
@@ -184,17 +199,19 @@ Pre-loaded vocabulary sets ready to copy:
    ```
 
 5. **Seed sample data** (Recommended for testing)
+
    ```bash
    cd server
-   
+
    # Option 1: Seed only system decks (IELTS, JLPT, TOPIK, HSK)
    npm run seed:system
-   
+
    # Option 2: Seed complete test data (user + decks + cards + review history)
    npm run seed:full
    ```
 
    **Test Account** (after `seed:full`):
+
    - Email: `test@memohub.com`
    - Password: `123456`
    - Includes: 65 cards, 30 days of review history, streaks, stats
@@ -202,6 +219,7 @@ Pre-loaded vocabulary sets ready to copy:
 6. **Start development servers**
 
    **Terminal 1 - Backend**:
+
    ```bash
    cd server
    npm run dev
@@ -209,6 +227,7 @@ Pre-loaded vocabulary sets ready to copy:
    ```
 
    **Terminal 2 - Frontend**:
+
    ```bash
    cd client
    npm run dev
@@ -267,6 +286,7 @@ memo-hub/
 ## 📘 API Documentation
 
 ### Base URL
+
 ```
 http://localhost:5000/api
 ```
@@ -274,6 +294,7 @@ http://localhost:5000/api
 ### Authentication
 
 #### Register
+
 ```http
 POST /auth/register
 Content-Type: application/json
@@ -287,6 +308,7 @@ Content-Type: application/json
 ```
 
 #### Login
+
 ```http
 POST /auth/login
 Content-Type: application/json
@@ -298,6 +320,7 @@ Content-Type: application/json
 ```
 
 #### Change Password
+
 ```http
 PUT /auth/change-password
 Authorization: Bearer <token>
@@ -311,6 +334,7 @@ Authorization: Bearer <token>
 ### Study Session
 
 #### Get Cards Due Today
+
 ```http
 GET /study/session?limit=50&deckId=<optional>
 Authorization: Bearer <token>
@@ -319,6 +343,7 @@ Authorization: Bearer <token>
 Returns cards that need review. If `deckId` provided, filters by that deck.
 
 #### Review Card
+
 ```http
 POST /study/review/:cardId
 Authorization: Bearer <token>
@@ -345,18 +370,20 @@ ease=2.5        ease varies    ease≥2.0
 ```
 
 ### Mastery Criteria
+
 A card is **Mastered** when:
+
 - `interval >= 7 days` (reviewed successfully for at least a week)
 - `ease_factor >= 2.0` (not too difficult to remember)
 
 ### Review Grades
 
-| Grade | Button | Effect | Use Case |
-|-------|--------|--------|----------|
-| **0** | Again | Reset interval to 0, review in 10 min | Completely forgot |
-| **1** | Hard | Reduce interval by 50% | Difficult to recall |
-| **2** | Good | Normal interval increase (×1.5-2.5) | Correct recall |
-| **3** | Easy | Maximum interval increase (×2.5+) | Very easy |
+| Grade | Button | Effect                                | Use Case            |
+| ----- | ------ | ------------------------------------- | ------------------- |
+| **0** | Again  | Reset interval to 0, review in 10 min | Completely forgot   |
+| **1** | Hard   | Reduce interval by 50%                | Difficult to recall |
+| **2** | Good   | Normal interval increase (×1.5-2.5)   | Correct recall      |
+| **3** | Easy   | Maximum interval increase (×2.5+)     | Very easy           |
 
 ### Example Timeline
 
@@ -389,7 +416,7 @@ export function calculateNextReview(
   if (grade < 2) {
     // Forgot (0) or Hard (1)
     if (grade === 0) {
-      newInterval = 0;  // Complete reset
+      newInterval = 0; // Complete reset
       newEaseFactor -= 0.2;
     } else {
       newInterval = Math.floor(currentStatus.interval * 0.5);
@@ -398,15 +425,17 @@ export function calculateNextReview(
   } else {
     // Good (2) or Easy (3)
     if (currentStatus.interval === 0) {
-      newInterval = 1;  // First review: 1 day
+      newInterval = 1; // First review: 1 day
     } else if (currentStatus.interval === 1) {
-      newInterval = 3;  // Second review: 3 days
+      newInterval = 3; // Second review: 3 days
     } else if (currentStatus.interval < 7) {
-      newInterval = Math.round(currentStatus.interval * 1.5);  // Learning phase
+      newInterval = Math.round(currentStatus.interval * 1.5); // Learning phase
     } else {
-      newInterval = Math.round(currentStatus.interval * currentStatus.ease_factor);  // Mastered: exponential
+      newInterval = Math.round(
+        currentStatus.interval * currentStatus.ease_factor
+      ); // Mastered: exponential
     }
-    
+
     newEaseFactor += grade === 2 ? 0.05 : 0.15;
   }
 
@@ -416,7 +445,7 @@ export function calculateNextReview(
   return {
     interval: newInterval,
     ease_factor: newEaseFactor,
-    next_review_at: new Date(Date.now() + newInterval * 86400000)  // milliseconds
+    next_review_at: new Date(Date.now() + newInterval * 86400000), // milliseconds
   };
 }
 ```
@@ -437,6 +466,7 @@ export function calculateNextReview(
 ### Detailed Workflows
 
 #### Creating Custom Deck
+
 1. Navigate to **Decks** page
 2. Click **+** FAB (Floating Action Button)
 3. Enter:
@@ -446,6 +476,7 @@ export function calculateNextReview(
 5. Start adding cards immediately
 
 #### Adding Cards
+
 1. Open your deck from Decks list
 2. Click **Add Card** or **+ FAB**
 3. Fill in:
@@ -457,6 +488,7 @@ export function calculateNextReview(
 5. Repeat or click **Done**
 
 #### Study Session Flow
+
 1. **Start**: Dashboard → **Study Now** (all decks) OR DeckDetail → **Start Study** (one deck)
 2. **Read Front**: See the question/word
 3. **Recall**: Try to remember the answer
@@ -470,6 +502,7 @@ export function calculateNextReview(
 7. **Celebrate**: See completion stats and return to Dashboard
 
 #### Using System Decks
+
 1. Navigate to **System Decks** from Decks page
 2. Browse available sets (IELTS, JLPT, TOPIK, HSK)
 3. Click **Copy to My Decks**
@@ -477,6 +510,7 @@ export function calculateNextReview(
 5. Study immediately or customize cards
 
 #### Customizing Settings
+
 1. **Profile** → **Settings**
 2. Adjust:
    - **Learning Target**: Your goal (e.g., "TOEFL 100")
@@ -488,6 +522,7 @@ export function calculateNextReview(
 3. Click **Save**
 
 #### Changing Password
+
 1. **Profile** → **Change Password**
 2. Enter:
    - Current password
