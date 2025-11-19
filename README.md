@@ -2,7 +2,7 @@
 
 <div align="center">
 
-![MemoHub Logo](client/public/fav-icon.png)
+![MemoHub Logo](client/public/logo-icon.png)
 
 **A powerful spaced repetition system (SRS) for mastering vocabulary with SM-2 algorithm**
 
