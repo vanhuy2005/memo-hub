@@ -15,7 +15,7 @@ export default function Dashboard() {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showCelebration, setShowCelebration] = useState(false);
-  
+
   // Animation State Management with SessionStorage
   const [hasVisited, setHasVisited] = useState(() => {
     return sessionStorage.getItem("dashboard_visited") === "true";
@@ -28,7 +28,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     loadStats();
-    
+
     // Mark dashboard as visited
     if (!hasVisited) {
       sessionStorage.setItem("dashboard_visited", "true");
@@ -65,12 +65,13 @@ export default function Dashboard() {
       // Clear the state
       window.history.replaceState({}, document.title);
     }
-  }, [location]);
+  }, [location, hasVisited]);
 
   const loadStats = async () => {
     try {
       const data = await studyService.getStudyStats();
-      setStats(data.data);
+      // Backend returns { success, message, stats }
+      setStats(data);
     } catch (error) {
       console.error("Error loading stats:", error);
     } finally {
@@ -291,8 +292,7 @@ export default function Dashboard() {
                 >
                   🔥
                 </motion.span>
-                {stats?.stats?.current_streak || 0} {t("dashboard.days")}{" "}
-                streak
+                {stats?.stats?.current_streak || 0} {t("dashboard.days")} streak
               </motion.p>
             </div>
           </div>
@@ -527,12 +527,12 @@ export default function Dashboard() {
                     animate={{
                       strokeDashoffset:
                         251.2 -
-                        (251.2 *
+                        251.2 *
                           Math.min(
                             (stats?.stats?.cards_studied_today || 0) /
                               (user?.daily_goal || 20),
                             1
-                          )),
+                          ),
                     }}
                     className="text-primary"
                     strokeLinecap="round"
@@ -648,6 +648,6 @@ export default function Dashboard() {
       </main>
 
       <BottomNav />
-    </div>
+    </motion.div>
   );
 }

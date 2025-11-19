@@ -8,6 +8,7 @@ import {
 import { AuthProvider } from "./contexts/AuthContext";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { ToastProvider } from "./contexts/ToastContext";
+import { SocketProvider } from "./contexts/SocketContext";
 import ErrorBoundary from "./components/ErrorBoundary";
 import ProtectedRoute from "./components/ProtectedRoute";
 import BottomNav from "./components/BottomNav";
@@ -40,161 +41,163 @@ function App() {
       <AuthProvider>
         <ThemeProvider>
           <ToastProvider>
-            <Router>
-              <Suspense fallback={<LoadingFallback />}>
-                <Routes>
-                  {/* Public Routes */}
-                  <Route path="/login" element={<Login />} />
-                  <Route path="/register" element={<Register />} />
+            <SocketProvider>
+              <Router>
+                <Suspense fallback={<LoadingFallback />}>
+                  <Routes>
+                    {/* Public Routes */}
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/register" element={<Register />} />
 
-                  {/* Protected Routes */}
-                  <Route
-                    path="/dashboard"
-                    element={
-                      <ProtectedRoute>
-                        <Dashboard />
-                        <BottomNav />
-                      </ProtectedRoute>
-                    }
-                  />
-                <Route
-                  path="/decks"
-                  element={
-                    <ProtectedRoute>
-                      <Decks />
-                      <BottomNav />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/decks/create"
-                  element={
-                    <ProtectedRoute>
-                      <CreateDeck />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/decks/:deckId"
-                  element={
-                    <ProtectedRoute>
-                      <DeckDetail />
-                      <BottomNav />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/decks/:deckId/cards/create"
-                  element={
-                    <ProtectedRoute>
-                      <CreateCard />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/decks/:deckId/cards/import"
-                  element={
-                    <ProtectedRoute>
-                      <ImportCards />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/decks/:deckId/cards/:cardId/edit"
-                  element={
-                    <ProtectedRoute>
-                      <CreateCard />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/system-decks"
-                  element={
-                    <ProtectedRoute>
-                      <SystemDecks />
-                      <BottomNav />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/study"
-                  element={
-                    <ProtectedRoute>
-                      <StudySession />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/statistics"
-                  element={
-                    <ProtectedRoute>
-                      <Statistics />
-                      <BottomNav />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/profile"
-                  element={
-                    <ProtectedRoute>
-                      <Profile />
-                      <BottomNav />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/settings"
-                  element={
-                    <ProtectedRoute>
-                      <Settings />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/change-password"
-                  element={
-                    <ProtectedRoute>
-                      <ChangePassword />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/about"
-                  element={
-                    <ProtectedRoute>
-                      <About />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/privacy"
-                  element={
-                    <ProtectedRoute>
-                      <Privacy />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/terms"
-                  element={
-                    <ProtectedRoute>
-                      <Terms />
-                    </ProtectedRoute>
-                  }
-                />
+                    {/* Protected Routes */}
+                    <Route
+                      path="/dashboard"
+                      element={
+                        <ProtectedRoute>
+                          <Dashboard />
+                          <BottomNav />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/decks"
+                      element={
+                        <ProtectedRoute>
+                          <Decks />
+                          <BottomNav />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/decks/create"
+                      element={
+                        <ProtectedRoute>
+                          <CreateDeck />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/decks/:deckId"
+                      element={
+                        <ProtectedRoute>
+                          <DeckDetail />
+                          <BottomNav />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/decks/:deckId/cards/create"
+                      element={
+                        <ProtectedRoute>
+                          <CreateCard />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/decks/:deckId/cards/import"
+                      element={
+                        <ProtectedRoute>
+                          <ImportCards />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/decks/:deckId/cards/:cardId/edit"
+                      element={
+                        <ProtectedRoute>
+                          <CreateCard />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/system-decks"
+                      element={
+                        <ProtectedRoute>
+                          <SystemDecks />
+                          <BottomNav />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/study"
+                      element={
+                        <ProtectedRoute>
+                          <StudySession />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/statistics"
+                      element={
+                        <ProtectedRoute>
+                          <Statistics />
+                          <BottomNav />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/profile"
+                      element={
+                        <ProtectedRoute>
+                          <Profile />
+                          <BottomNav />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/settings"
+                      element={
+                        <ProtectedRoute>
+                          <Settings />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/change-password"
+                      element={
+                        <ProtectedRoute>
+                          <ChangePassword />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/about"
+                      element={
+                        <ProtectedRoute>
+                          <About />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/privacy"
+                      element={
+                        <ProtectedRoute>
+                          <Privacy />
+                        </ProtectedRoute>
+                      }
+                    />
+                    <Route
+                      path="/terms"
+                      element={
+                        <ProtectedRoute>
+                          <Terms />
+                        </ProtectedRoute>
+                      }
+                    />
 
-                {/* Default Route */}
-                <Route
-                  path="/"
-                  element={<Navigate to="/dashboard" replace />}
-                />
-                <Route
-                  path="*"
-                  element={<Navigate to="/dashboard" replace />}
-                />
-              </Routes>
-              </Suspense>
-            </Router>
+                    {/* Default Route */}
+                    <Route
+                      path="/"
+                      element={<Navigate to="/dashboard" replace />}
+                    />
+                    <Route
+                      path="*"
+                      element={<Navigate to="/dashboard" replace />}
+                    />
+                  </Routes>
+                </Suspense>
+              </Router>
+            </SocketProvider>
           </ToastProvider>
         </ThemeProvider>
       </AuthProvider>

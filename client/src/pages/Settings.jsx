@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
-import { useToast } from "../contexts/ToastContext";
+import { useToast } from "../hooks/useToast";
 import { authService } from "../services";
 import { useTranslation } from "react-i18next";
-import { ArrowLeft } from "lucide-react";
+import { motion } from "framer-motion";
+import { ArrowLeft, Target, Bell, Palette, Save, Sparkles } from "lucide-react";
 
 export default function Settings() {
   const navigate = useNavigate();
@@ -43,55 +44,146 @@ export default function Settings() {
       const response = await authService.updateSettings(settings);
       if (response.success) {
         updateUser(response.data.user);
-        // Change language dynamically
         i18n.changeLanguage(settings.language);
         success("✨ " + t("profile.changesSaved"));
         setTimeout(() => navigate("/profile"), 500);
       }
     } catch (err) {
       console.error("Error saving settings:", err);
-      error(
-        err.response?.data?.message ||
-          "Không thể lưu cài đặt. Vui lòng thử lại."
-      );
+      error(t("common.error"));
     } finally {
       setLoading(false);
     }
   };
 
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.1,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0, scale: 0.95 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      scale: 1,
+      transition: {
+        type: "spring",
+        stiffness: 200,
+        damping: 20,
+      },
+    },
+  };
+
   return (
-    <div className="relative flex min-h-screen w-full flex-col font-display bg-background-light dark:bg-background-dark overflow-x-hidden">
-      {/* Header */}
-      <header className="sticky top-0 z-10 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-sm border-b border-gray-200 dark:border-gray-800">
-        <div className="max-w-3xl mx-auto">
+    <motion.div
+      className="min-h-screen bg-[#FEFBF6] dark:bg-[#2D2A32] font-display pb-24"
+      initial="hidden"
+      animate="visible"
+      variants={containerVariants}
+    >
+      {/* Floating Candies Background */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
+        {["🍭", "🍬", "🍡", "🧁", "🍰", "🍓"].map((candy, i) => (
+          <motion.div
+            key={i}
+            className="absolute text-5xl"
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+            }}
+            animate={{
+              y: [0, -30, 0],
+              rotate: [0, 360],
+              opacity: [0.2, 0.5, 0.2],
+            }}
+            transition={{
+              duration: 8 + Math.random() * 4,
+              repeat: Infinity,
+              delay: Math.random() * 3,
+            }}
+          >
+            {candy}
+          </motion.div>
+        ))}
+      </div>
+
+      {/* Kawaii Header */}
+      <motion.header
+        variants={itemVariants}
+        className="sticky top-0 z-10 bg-white/80 dark:bg-[#1F1D24]/80 backdrop-blur-xl border-b-4 border-white/50 dark:border-purple-700/30 shadow-soft"
+      >
+        <div className="max-w-4xl mx-auto">
           <div className="flex items-center p-4 justify-between">
-            <button
+            <motion.button
               onClick={() => navigate("/profile")}
-              className="text-gray-800 dark:text-gray-200 flex size-10 shrink-0 items-center justify-center rounded-full hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
+              className="flex size-14 shrink-0 items-center justify-center rounded-full bg-white dark:bg-gray-800 shadow-soft hover:shadow-pop transition-all"
+              whileHover={{ scale: 1.1, rotate: -10 }}
+              whileTap={{ scale: 0.9 }}
             >
-              <ArrowLeft size={24} strokeWidth={2} />
-            </button>
-            <h1 className="text-lg lg:text-xl font-bold leading-tight tracking-[-0.015em] flex-1 text-center text-gray-900 dark:text-white pr-10">
-              {t("settings.title")}
-            </h1>
+              <ArrowLeft className="text-primary" size={24} strokeWidth={3} />
+            </motion.button>
+
+            <motion.div
+              className="flex-1 text-center"
+              initial={{ y: -20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.2 }}
+            >
+              <h1 className="text-3xl lg:text-4xl font-black tracking-tight bg-gradient-to-r from-[#88D8B0] via-[#FFB7B2] to-[#E0BBE4] bg-clip-text text-transparent flex items-center justify-center gap-3">
+                <motion.span
+                  animate={{ rotate: [0, 20, -20, 0] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                >
+                  🍭
+                </motion.span>
+                Cài Đặt
+                <motion.span
+                  animate={{ scale: [1, 1.3, 1] }}
+                  transition={{ duration: 1.5, repeat: Infinity }}
+                >
+                  ✨
+                </motion.span>
+              </h1>
+              <p className="text-sm font-semibold text-purple-600 dark:text-purple-400 mt-1">
+                Tùy chỉnh theo ý bạn! 💖
+              </p>
+            </motion.div>
+
+            <div className="flex size-14 shrink-0"></div>
           </div>
         </div>
-      </header>
+      </motion.header>
 
-      {/* Main Content */}
-      <main className="flex-1 max-w-3xl mx-auto w-full p-4 lg:p-6 pb-24 space-y-4">
-        {/* Learning Goal */}
-        <section className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
-          <div className="p-6">
-            <h3 className="text-gray-900 dark:text-gray-100 text-base font-bold mb-4">
-              {t("settings.learningTarget")}
-            </h3>
+      <main className="relative max-w-4xl mx-auto px-4 lg:px-6 py-6 z-10">
+        {/* Learning Target Card */}
+        <motion.div variants={itemVariants} className="mb-6">
+          <div className="rounded-[32px] bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-4 border-white/50 dark:border-purple-700/30 p-8 shadow-pop">
+            <div className="flex items-center gap-3 mb-6">
+              <motion.div
+                animate={{ scale: [1, 1.2, 1] }}
+                transition={{ duration: 2, repeat: Infinity }}
+              >
+                <Target className="text-[#FFB7B2]" size={32} strokeWidth={3} />
+              </motion.div>
+              <h2 className="text-2xl font-black text-gray-900 dark:text-white">
+                Mục tiêu học tập
+              </h2>
+            </div>
+
             <div className="space-y-4">
               <div>
-                <label className="block text-gray-700 dark:text-gray-300 text-sm font-medium mb-2">
-                  {t("profile.learningTarget")}
+                <label className="text-sm font-bold text-gray-700 dark:text-gray-300 mb-3 flex items-center gap-2">
+                  <span className="text-xl">🎯</span>
+                  <span>Mục tiêu của bạn là gì?</span>
                 </label>
-                <input
+                <motion.input
                   type="text"
                   value={settings.learning_target}
                   onChange={(e) =>
@@ -100,78 +192,122 @@ export default function Settings() {
                       learning_target: e.target.value,
                     })
                   }
-                  placeholder="IELTS 7.0, HSK 5, JLPT N2"
-                  className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary/50 focus:border-primary"
+                  placeholder="Ví dụ: Đạt IELTS 7.0, Luyện thi JLPT N3..."
+                  className="w-full px-6 py-4 rounded-[24px] border-4 border-slate-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white font-semibold text-base focus:border-primary dark:focus:border-primary focus:outline-none focus:shadow-glow transition-all"
+                  whileFocus={{ scale: 1.02 }}
                 />
               </div>
+
               <div>
-                <label className="block text-gray-700 dark:text-gray-300 text-sm font-medium mb-2">
-                  {t("profile.dailyGoal")}:{" "}
-                  <span className="text-primary font-bold">
-                    {settings.daily_goal} {t("settings.cardsPerDay")}
-                  </span>
+                <label className="text-sm font-bold text-gray-700 dark:text-gray-300 mb-3 flex items-center gap-2">
+                  <span className="text-xl">📊</span>
+                  <span>Số thẻ học mỗi ngày: {settings.daily_goal} thẻ</span>
                 </label>
-                <input
-                  type="range"
-                  min="5"
-                  max="50"
-                  step="5"
-                  value={settings.daily_goal}
-                  onChange={(e) =>
-                    setSettings({
-                      ...settings,
-                      daily_goal: parseInt(e.target.value),
-                    })
-                  }
-                  className="w-full accent-primary"
-                />
-                <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 mt-1">
-                  <span>5</span>
-                  <span>50</span>
+                <div className="relative">
+                  <motion.input
+                    type="range"
+                    min="5"
+                    max="100"
+                    step="5"
+                    value={settings.daily_goal}
+                    onChange={(e) =>
+                      setSettings({
+                        ...settings,
+                        daily_goal: parseInt(e.target.value),
+                      })
+                    }
+                    className="w-full h-4 bg-gradient-to-r from-[#D4F0F0] to-[#E0BBE4] dark:from-[#88D8B0]/30 dark:to-[#E0BBE4]/30 rounded-full appearance-none cursor-pointer slider-thumb"
+                    whileFocus={{ scale: 1.02 }}
+                  />
+                  <div className="flex justify-between text-xs font-bold text-gray-500 mt-2">
+                    <span>5 thẻ</span>
+                    <span>100 thẻ</span>
+                  </div>
+                </div>
+
+                {/* Progress indicator */}
+                <div className="mt-4 flex items-center justify-center gap-2">
+                  <motion.div
+                    className="px-6 py-3 rounded-full bg-gradient-to-r from-[#88D8B0] to-[#FFB7B2] text-white font-black text-xl shadow-glow"
+                    animate={{ scale: [1, 1.05, 1] }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                  >
+                    {settings.daily_goal} thẻ/ngày
+                  </motion.div>
                 </div>
               </div>
             </div>
           </div>
-        </section>
+        </motion.div>
 
-        {/* Notifications */}
-        <section className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
-          <div className="p-6">
-            <h3 className="text-gray-900 dark:text-gray-100 text-base font-bold mb-4">
-              {t("settings.notifications")}
-            </h3>
-            <div className="space-y-4">
+        {/* Notifications Card */}
+        <motion.div variants={itemVariants} className="mb-6">
+          <div className="rounded-[32px] bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-4 border-white/50 dark:border-purple-700/30 p-8 shadow-pop">
+            <div className="flex items-center gap-3 mb-6">
+              <motion.div
+                animate={{ rotate: [0, 15, -15, 0] }}
+                transition={{ duration: 2, repeat: Infinity }}
+              >
+                <Bell className="text-yellow-500" size={32} strokeWidth={3} />
+              </motion.div>
+              <h2 className="text-2xl font-black text-gray-900 dark:text-white">
+                Thông báo
+              </h2>
+            </div>
+
+            <div className="space-y-6">
+              {/* Toggle Switch */}
               <div className="flex items-center justify-between">
-                <div className="flex-1">
-                  <p className="text-gray-900 dark:text-gray-100 font-medium">
-                    {t("profile.dailyReminder")}
-                  </p>
-                  <p className="text-gray-600 dark:text-gray-400 text-sm">
-                    {t("profile.dailyReminder")}
-                  </p>
+                <div className="flex items-center gap-3">
+                  <span className="text-2xl">🔔</span>
+                  <div>
+                    <p className="text-base font-bold text-gray-900 dark:text-white">
+                      Bật thông báo
+                    </p>
+                    <p className="text-sm font-semibold text-gray-500 dark:text-gray-400">
+                      Nhận nhắc nhở hàng ngày
+                    </p>
+                  </div>
                 </div>
-                <label className="relative inline-flex items-center cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={settings.notifications_enabled}
-                    onChange={(e) =>
-                      setSettings({
-                        ...settings,
-                        notifications_enabled: e.target.checked,
-                      })
-                    }
-                    className="sr-only peer"
+
+                <motion.button
+                  onClick={() =>
+                    setSettings({
+                      ...settings,
+                      notifications_enabled: !settings.notifications_enabled,
+                    })
+                  }
+                  className={`relative w-20 h-10 rounded-full transition-all ${
+                    settings.notifications_enabled
+                      ? "bg-gradient-to-r from-[#A7E9AF] to-[#88D8B0] shadow-glow"
+                      : "bg-gray-300 dark:bg-gray-700"
+                  }`}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <motion.div
+                    className="absolute top-1 w-8 h-8 bg-white rounded-full shadow-soft"
+                    animate={{
+                      left: settings.notifications_enabled
+                        ? "calc(100% - 36px)"
+                        : "4px",
+                    }}
+                    transition={{ type: "spring", stiffness: 500, damping: 30 }}
                   />
-                  <div className="w-11 h-6 bg-gray-200 dark:bg-gray-700 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary/30 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
-                </label>
+                </motion.button>
               </div>
 
+              {/* Reminder Time */}
               {settings.notifications_enabled && (
-                <div>
-                  <label className="block text-gray-700 dark:text-gray-300 text-sm font-medium mb-2">
-                    {t("profile.reminderTime")}
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  exit={{ opacity: 0, height: 0 }}
+                >
+                  <label className="text-sm font-bold text-gray-700 dark:text-gray-300 mb-3 flex items-center gap-2">
+                    <span className="text-xl">⏰</span>
+                    <span>Thời gian nhắc nhở</span>
                   </label>
-                  <input
+                  <motion.input
                     type="time"
                     value={settings.reminder_time}
                     onChange={(e) =>
@@ -180,80 +316,197 @@ export default function Settings() {
                         reminder_time: e.target.value,
                       })
                     }
-                    className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary/50 focus:border-primary"
+                    className="w-full px-6 py-4 rounded-[24px] border-4 border-slate-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white font-bold text-lg focus:border-primary focus:outline-none focus:shadow-glow transition-all"
+                    whileFocus={{ scale: 1.02 }}
                   />
-                </div>
+                </motion.div>
               )}
             </div>
           </div>
-        </section>
+        </motion.div>
 
-        {/* Theme */}
-        <section className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
-          <div className="p-6">
-            <h3 className="text-gray-900 dark:text-gray-100 text-base font-bold mb-4">
-              {t("settings.theme")}
-            </h3>
-            <div className="space-y-2">
-              {["auto", "light", "dark"].map((theme) => (
-                <label
-                  key={theme}
-                  className="flex items-center p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700/50 cursor-pointer transition-colors"
-                >
-                  <input
-                    type="radio"
-                    name="theme"
-                    value={theme}
-                    checked={settings.theme === theme}
-                    onChange={(e) =>
-                      setSettings({ ...settings, theme: e.target.value })
-                    }
-                    className="w-4 h-4 text-primary bg-gray-100 border-gray-300 focus:ring-primary"
-                  />
-                  <span className="ml-3 text-gray-900 dark:text-gray-100">
-                    {theme === "auto"
-                      ? t("settings.system")
-                      : theme === "light"
-                      ? t("settings.light")
-                      : t("settings.dark")}
-                  </span>
+        {/* Theme & Language Card */}
+        <motion.div variants={itemVariants} className="mb-6">
+          <div className="rounded-[32px] bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-4 border-white/50 dark:border-purple-700/30 p-8 shadow-pop">
+            <div className="flex items-center gap-3 mb-6">
+              <motion.div
+                animate={{ rotate: [0, 360] }}
+                transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+              >
+                <Palette className="text-[#E0BBE4]" size={32} strokeWidth={3} />
+              </motion.div>
+              <h2 className="text-2xl font-black text-gray-900 dark:text-white">
+                Giao diện & Ngôn ngữ
+              </h2>
+            </div>
+
+            <div className="space-y-6">
+              {/* Theme Selection */}
+              <div>
+                <label className="text-sm font-bold text-gray-700 dark:text-gray-300 mb-3 flex items-center gap-2">
+                  <span className="text-xl">🎨</span>
+                  <span>Chủ đề</span>
                 </label>
-              ))}
+                <div className="grid grid-cols-3 gap-3">
+                  {[
+                    {
+                      value: "light",
+                      label: "Sáng",
+                      emoji: "☀️",
+                      color: "from-yellow-200 to-orange-200",
+                    },
+                    {
+                      value: "dark",
+                      label: "Tối",
+                      emoji: "🌙",
+                      color: "from-indigo-800 to-purple-800",
+                    },
+                    {
+                      value: "auto",
+                      label: "Tự động",
+                      emoji: "✨",
+                      color: "from-[#E0BBE4] to-[#FFB7B2]",
+                    },
+                  ].map((theme) => (
+                    <motion.button
+                      key={theme.value}
+                      onClick={() =>
+                        setSettings({ ...settings, theme: theme.value })
+                      }
+                      className={`flex flex-col items-center gap-2 p-4 rounded-[20px] border-4 transition-all ${
+                        settings.theme === theme.value
+                          ? "border-primary bg-gradient-to-br " +
+                            theme.color +
+                            " shadow-glow scale-105"
+                          : "border-slate-200 dark:border-gray-700 bg-white/50 dark:bg-gray-800/50"
+                      }`}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      <span className="text-4xl">{theme.emoji}</span>
+                      <span
+                        className={`text-sm font-black ${
+                          settings.theme === theme.value
+                            ? "text-white"
+                            : "text-gray-700 dark:text-gray-300"
+                        }`}
+                      >
+                        {theme.label}
+                      </span>
+                    </motion.button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Language Selection */}
+              <div>
+                <label className="text-sm font-bold text-gray-700 dark:text-gray-300 mb-3 flex items-center gap-2">
+                  <span className="text-xl">🌏</span>
+                  <span>Ngôn ngữ ứng dụng</span>
+                </label>
+                <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
+                  {[
+                    { value: "vi", label: "Tiếng Việt", flag: "🇻🇳" },
+                    { value: "en", label: "English", flag: "🇬🇧" },
+                    { value: "zh", label: "中文", flag: "🇨🇳" },
+                    { value: "ja", label: "日本語", flag: "🇯🇵" },
+                    { value: "ko", label: "한국어", flag: "🇰🇷" },
+                  ].map((lang) => (
+                    <motion.button
+                      key={lang.value}
+                      onClick={() =>
+                        setSettings({ ...settings, language: lang.value })
+                      }
+                      className={`flex items-center justify-center gap-2 p-4 rounded-[20px] border-4 font-bold transition-all ${
+                        settings.language === lang.value
+                          ? "border-primary bg-gradient-to-r from-[#E0BBE4] to-[#FFB7B2] text-white shadow-glow scale-105"
+                          : "border-slate-200 dark:border-gray-700 bg-white/50 dark:bg-gray-800/50 text-gray-700 dark:text-gray-300"
+                      }`}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      <span className="text-2xl">{lang.flag}</span>
+                      <span className="text-sm">{lang.label}</span>
+                    </motion.button>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
-        </section>
-
-        {/* Language */}
-        <section className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
-          <div className="p-6">
-            <h3 className="text-gray-900 dark:text-gray-100 text-base font-bold mb-4">
-              {t("settings.language")}
-            </h3>
-            <select
-              value={settings.language}
-              onChange={(e) =>
-                setSettings({ ...settings, language: e.target.value })
-              }
-              className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary/50 focus:border-primary"
-            >
-              <option value="vi">🇻🇳 Tiếng Việt</option>
-              <option value="en">🇬🇧 English</option>
-              <option value="zh">🇨🇳 中文 (Trung Quốc)</option>
-              <option value="ja">🇯🇵 日本語 (Nhật Bản)</option>
-              <option value="ko">🇰🇷 한국어 (Hàn Quốc)</option>
-            </select>
-          </div>
-        </section>
-
-        {/* Save Button */}
-        <button
-          onClick={handleSave}
-          disabled={loading}
-          className="w-full py-4 bg-primary text-gray-900 rounded-full font-bold text-base hover:opacity-90 transition-opacity shadow-lg shadow-primary/30 disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {loading ? t("common.loading") : t("profile.saveChanges")}
-        </button>
+        </motion.div>
       </main>
-    </div>
+
+      {/* Floating Save Button */}
+      <motion.div
+        className="fixed bottom-20 left-0 right-0 z-20 px-4"
+        initial={{ y: 100, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ delay: 0.5 }}
+      >
+        <div className="max-w-4xl mx-auto">
+          <motion.button
+            onClick={handleSave}
+            disabled={loading}
+            className={`w-full flex items-center justify-center gap-3 rounded-full h-16 px-8 font-black text-xl shadow-pop transition-all ${
+              loading
+                ? "bg-gray-300 dark:bg-gray-700 cursor-not-allowed"
+                : "bg-gradient-to-r from-[#88D8B0] via-[#FFB7B2] to-[#E0BBE4] text-white hover:shadow-glow"
+            }`}
+            whileHover={!loading ? { scale: 1.02, y: -3 } : {}}
+            whileTap={!loading ? { scale: 0.98 } : {}}
+          >
+            {loading ? (
+              <>
+                <motion.div
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                >
+                  <Sparkles size={24} />
+                </motion.div>
+                <span>Đang lưu...</span>
+              </>
+            ) : (
+              <>
+                <Save size={24} strokeWidth={3} />
+                <span>Lưu thay đổi</span>
+                <motion.span
+                  animate={{ scale: [1, 1.3, 1] }}
+                  transition={{ duration: 1.5, repeat: Infinity }}
+                >
+                  ✨
+                </motion.span>
+              </>
+            )}
+          </motion.button>
+        </div>
+      </motion.div>
+
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `
+        .slider-thumb::-webkit-slider-thumb {
+          appearance: none;
+          width: 32px;
+          height: 32px;
+          background: linear-gradient(135deg, #88D8B0, #FFB7B2);
+          border-radius: 50%;
+          cursor: pointer;
+          box-shadow: 0 4px 12px rgba(136, 216, 176, 0.4);
+          border: 4px solid white;
+        }
+
+        .slider-thumb::-moz-range-thumb {
+          width: 32px;
+          height: 32px;
+          background: linear-gradient(135deg, #88D8B0, #FFB7B2);
+          border-radius: 50%;
+          cursor: pointer;
+          box-shadow: 0 4px 12px rgba(136, 216, 176, 0.4);
+          border: 4px solid white;
+        }
+      `,
+        }}
+      />
+    </motion.div>
   );
 }

@@ -33,7 +33,7 @@
 
   /* Cute Button */
   .btn-cute {
-    @apply px-6 py-3 rounded-3xl font-bold shadow-pop hover:shadow-pop-hover 
+    @apply px-6 py-3 rounded-3xl font-bold shadow-solid hover:shadow-solid-lg 
            transform hover:-translate-y-0.5 active:translate-y-0 
            transition-all duration-200 ease-out;
   }
@@ -69,18 +69,14 @@
   }
 
   .card-hover:hover {
-    @apply scale-105 rotate-1 shadow-glow-lg;
+    @apply scale-105 rotate-1 shadow-glow;
   }
 }
 
 @layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
-
   /* Gradient Text */
   .gradient-text {
-    @apply bg-gradient-to-r from-primary via-secondary to-accent-lavender bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent;
   }
 
   /* Glow Text */

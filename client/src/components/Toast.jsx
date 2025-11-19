@@ -1,4 +1,5 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import {
   CheckCircle2,
   XCircle,
@@ -9,48 +10,69 @@ import {
 } from "lucide-react";
 
 const Toast = ({ message, type = "info", onClose, duration = 3000 }) => {
+  const [progress, setProgress] = useState(100);
+
   useEffect(() => {
     if (duration > 0) {
       const timer = setTimeout(() => {
         onClose();
       }, duration);
 
-      return () => clearTimeout(timer);
+      // Animate progress bar
+      const startTime = Date.now();
+      const progressInterval = setInterval(() => {
+        const elapsed = Date.now() - startTime;
+        const remaining = Math.max(0, 100 - (elapsed / duration) * 100);
+        setProgress(remaining);
+
+        if (remaining === 0) {
+          clearInterval(progressInterval);
+        }
+      }, 16); // ~60fps
+
+      return () => {
+        clearTimeout(timer);
+        clearInterval(progressInterval);
+      };
     }
   }, [duration, onClose]);
 
   const types = {
     success: {
-      bg: "bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/30 dark:to-emerald-900/30",
-      border: "border-green-300 dark:border-green-700",
+      borderColor: "#A7E9AF",
       icon: CheckCircle2,
-      iconColor: "text-green-600 dark:text-green-400",
-      textColor: "text-green-800 dark:text-green-200",
+      iconColor: "text-[#A7E9AF]",
+      textColor: "text-[#4A5568] dark:text-white",
+      progressColor: "bg-[#A7E9AF]",
       emoji: "✨",
+      accentEmoji: "🌟",
     },
     error: {
-      bg: "bg-gradient-to-r from-red-50 to-pink-50 dark:from-red-900/30 dark:to-pink-900/30",
-      border: "border-red-300 dark:border-red-700",
+      borderColor: "#FFB7B2",
       icon: XCircle,
-      iconColor: "text-red-600 dark:text-red-400",
-      textColor: "text-red-800 dark:text-red-200",
-      emoji: "😢",
+      iconColor: "text-[#FFB7B2]",
+      textColor: "text-[#4A5568] dark:text-white",
+      progressColor: "bg-[#FFB7B2]",
+      emoji: "💔",
+      accentEmoji: "😢",
     },
     warning: {
-      bg: "bg-gradient-to-r from-yellow-50 to-orange-50 dark:from-yellow-900/30 dark:to-orange-900/30",
-      border: "border-yellow-300 dark:border-yellow-700",
+      borderColor: "#FFD3B6",
       icon: AlertCircle,
-      iconColor: "text-yellow-600 dark:text-yellow-400",
-      textColor: "text-yellow-800 dark:text-yellow-200",
+      iconColor: "text-[#FFD3B6]",
+      textColor: "text-[#4A5568] dark:text-white",
+      progressColor: "bg-[#FFD3B6]",
       emoji: "⚠️",
+      accentEmoji: "⚡",
     },
     info: {
-      bg: "bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-900/30 dark:to-cyan-900/30",
-      border: "border-blue-300 dark:border-blue-700",
+      borderColor: "#B5DEFF",
       icon: Info,
-      iconColor: "text-blue-600 dark:text-blue-400",
-      textColor: "text-blue-800 dark:text-blue-200",
+      iconColor: "text-[#B5DEFF]",
+      textColor: "text-[#4A5568] dark:text-white",
+      progressColor: "bg-[#B5DEFF]",
       emoji: "💡",
+      accentEmoji: "✨",
     },
   };
 
@@ -58,69 +80,112 @@ const Toast = ({ message, type = "info", onClose, duration = 3000 }) => {
   const Icon = config.icon;
 
   return (
-    <div className="fixed top-4 right-4 z-[9999] animate-slideInRight">
-      <div
-        className={`${config.bg} ${config.border} border-2 rounded-2xl shadow-2xl max-w-md w-full backdrop-blur-sm`}
+    <motion.div
+      initial={{ x: 400, opacity: 0, scale: 0.8 }}
+      animate={{ x: 0, opacity: 1, scale: 1 }}
+      exit={{ x: 400, opacity: 0, scale: 0.8 }}
+      transition={{
+        type: "spring",
+        stiffness: 300,
+        damping: 20,
+      }}
+      className="w-full max-w-md"
+    >
+      <motion.div
+        className="relative bg-white dark:bg-gray-800 rounded-3xl overflow-hidden"
+        style={{
+          borderLeft: `6px solid ${config.borderColor}`,
+          boxShadow: "4px 4px 0px 0px rgba(0,0,0,0.05)",
+        }}
+        whileHover={{ scale: 1.02, y: -2 }}
+        transition={{ type: "spring", stiffness: 400, damping: 15 }}
       >
-        <div className="relative p-4">
-          {/* Sparkles decoration for success */}
-          {type === "success" && (
-            <div className="absolute -top-2 -right-2 animate-bounce">
-              <Sparkles size={20} className="text-yellow-400 fill-yellow-400" />
-            </div>
-          )}
+        {/* Floating accent emoji */}
+        <motion.div
+          className="absolute -top-1 -right-1 text-xl z-10"
+          animate={{
+            rotate: [0, 15, -15, 0],
+            scale: [1, 1.2, 1],
+          }}
+          transition={{
+            duration: 2,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        >
+          {config.accentEmoji}
+        </motion.div>
 
+        <div className="relative p-4 pr-5">
           <div className="flex items-start gap-3">
-            {/* Icon and Emoji */}
-            <div className="flex-shrink-0 flex items-center gap-2">
-              <span className="text-2xl">{config.emoji}</span>
-              <Icon
-                size={24}
-                className={`${config.iconColor}`}
-                strokeWidth={2.5}
-              />
-            </div>
+            {/* Icon Section */}
+            <motion.div
+              className="flex-shrink-0 flex items-center gap-2"
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{
+                type: "spring",
+                stiffness: 500,
+                damping: 15,
+                delay: 0.1,
+              }}
+            >
+              <motion.span
+                className="text-2xl"
+                animate={{ rotate: [0, 10, -10, 0] }}
+                transition={{
+                  duration: 1.5,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
+              >
+                {config.emoji}
+              </motion.span>
+              <Icon size={24} className={config.iconColor} strokeWidth={2.5} />
+            </motion.div>
 
             {/* Message */}
-            <div className="flex-1 pt-1">
+            <motion.div
+              className="flex-1 pt-1"
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.15 }}
+            >
               <p
-                className={`${config.textColor} font-semibold text-sm leading-relaxed`}
+                className={`${config.textColor} font-bold text-sm leading-relaxed`}
               >
                 {message}
               </p>
-            </div>
+            </motion.div>
 
             {/* Close Button */}
-            <button
+            <motion.button
               onClick={onClose}
-              className={`flex-shrink-0 ${config.iconColor} hover:opacity-70 transition-opacity rounded-full p-1 hover:bg-black/5 dark:hover:bg-white/5`}
+              className={`flex-shrink-0 ${config.iconColor} rounded-full p-1.5 transition-colors hover:bg-gray-100 dark:hover:bg-gray-700`}
+              whileHover={{ scale: 1.1, rotate: 90 }}
+              whileTap={{ scale: 0.9 }}
+              transition={{ type: "spring", stiffness: 400, damping: 15 }}
             >
               <X size={18} strokeWidth={2.5} />
-            </button>
+            </motion.button>
           </div>
 
-          {/* Progress bar */}
+          {/* Progress Bar */}
           {duration > 0 && (
-            <div className="absolute bottom-0 left-0 right-0 h-1 bg-black/5 dark:bg-white/5 rounded-b-2xl overflow-hidden">
-              <div
-                className={`h-full ${
-                  type === "success"
-                    ? "bg-green-500"
-                    : type === "error"
-                    ? "bg-red-500"
-                    : type === "warning"
-                    ? "bg-yellow-500"
-                    : "bg-blue-500"
-                }`}
+            <div className="absolute bottom-0 left-0 right-0 h-1.5 bg-gray-100 dark:bg-gray-700/50 rounded-b-3xl overflow-hidden">
+              <motion.div
+                className={`h-full ${config.progressColor} rounded-b-3xl`}
                 style={{
-                  animation: `shrink ${duration}ms linear forwards`,
+                  width: `${progress}%`,
                 }}
+                initial={{ width: "100%" }}
+                transition={{ duration: 0.1, ease: "linear" }}
               />
             </div>
           )}
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 };
 

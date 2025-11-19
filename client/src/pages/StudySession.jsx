@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { useToast } from "../contexts/ToastContext";
+import { useToast } from "../hooks/useToast";
 import { studyService } from "../services";
 import { useTranslation } from "react-i18next";
 import { Activity, X } from "lucide-react";
@@ -21,45 +21,6 @@ export default function StudySession() {
   const { error: showError, success: showSuccess } = useToast();
   const { state } = useLocation();
   const deckId = state?.deckId; // Lấy deckId từ navigation state
-
-  // Helper to get card status
-  const getCardStatus = (card) => {
-    const interval = card.srs_status?.interval || 0;
-    const easeFactor = card.srs_status?.ease_factor || 2.5;
-
-    if (interval === 0) {
-      return {
-        label: "Thẻ mới",
-        color: "bg-gray-500",
-        textColor: "text-gray-500",
-      };
-    }
-    if (interval >= 7 && easeFactor >= 2.0) {
-      return {
-        label: "Đã thuộc",
-        color: "bg-green-500",
-        textColor: "text-green-500",
-      };
-    }
-    return {
-      label: "Đang học",
-      color: "bg-yellow-500",
-      textColor: "text-yellow-500",
-    };
-  };
-
-  // Calculate progress to mastery
-  const getMasteryProgress = (card) => {
-    const interval = card.srs_status?.interval || 0;
-    const easeFactor = card.srs_status?.ease_factor || 2.5;
-
-    if (interval >= 7 && easeFactor >= 2.0) return 100;
-
-    const intervalProgress = Math.min(100, (interval / 7) * 70);
-    const easeProgress = easeFactor >= 2.0 ? 30 : 0;
-
-    return Math.round(intervalProgress + easeProgress);
-  };
 
   const loadStudySession = useCallback(async () => {
     try {
@@ -216,7 +177,10 @@ export default function StudySession() {
     >
       {/* Floating blobs background */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="blob bg-primary/20" style={{ top: "10%", left: "5%" }} />
+        <div
+          className="blob bg-primary/20"
+          style={{ top: "10%", left: "5%" }}
+        />
         <div
           className="blob bg-secondary/20"
           style={{ top: "60%", right: "10%", animationDelay: "2s" }}
@@ -281,10 +245,7 @@ export default function StudySession() {
                 {/* Road markings */}
                 <div className="absolute inset-0 flex items-center justify-around px-4">
                   {[...Array(10)].map((_, i) => (
-                    <div
-                      key={i}
-                      className="w-1 h-2 bg-white/40 rounded-full"
-                    />
+                    <div key={i} className="w-1 h-2 bg-white/40 rounded-full" />
                   ))}
                 </div>
 
@@ -417,8 +378,8 @@ export default function StudySession() {
 
       {/* Exit Confirmation Dialog */}
       {showExitDialog && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 max-w-sm w-full shadow-2xl">
+        <motion.div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <motion.div className="bg-white dark:bg-gray-800 rounded-2xl p-6 max-w-sm w-full shadow-2xl">
             <div className="text-center mb-4">
               <div className="text-5xl mb-3">⚠️</div>
               <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
@@ -443,9 +404,9 @@ export default function StudySession() {
                 Thoát
               </button>
             </div>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       )}
-    </div>
+    </motion.div>
   );
 }

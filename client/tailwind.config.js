@@ -5,43 +5,48 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Pastel Matcha Theme
+        // 🌸 Kawaii Soft Pop Palette
         primary: {
-          DEFAULT: "#88D8B0", // Soft Matcha
-          hover: "#7BC6A0",
+          DEFAULT: "#88D8B0", // Matcha Green
+          hover: "#6FCF97",
           light: "#95D2B3",
           dark: "#55AD9B",
         },
         secondary: {
-          DEFAULT: "#FFB7B2", // Pastel Peach/Blush
-          light: "#FFC8C5",
+          DEFAULT: "#FFB7B2", // Pastel Pink
+          light: "#FFDAC1",
           dark: "#FF9E98",
         },
         accent: {
-          DEFAULT: "#D8EFD3", // Dusty Rose/Mint
-          rose: "#FFE5E5",
-          lavender: "#E5D9F2",
-          sky: "#C9E4F5",
+          DEFAULT: "#E0BBE4", // Soft Lavender
+          blue: "#B5DEFF", // Baby Blue
+          peach: "#FFD3B6", // Warning
+          mint: "#D4F0F0", // Info
         },
         surface: {
-          cream: "#FFFBF0", // Warm Cream (light mode bg)
+          cream: "#FEFBF6", // Warm Cream (light mode bg)
           white: "#FFFFFF",
           glass: "rgba(255, 255, 255, 0.6)",
         },
         text: {
-          primary: "#4A5568", // Soft Slate
+          primary: "#4A5568", // Soft Charcoal
           secondary: "#718096",
-          dark: "#2C3E50", // Dark Green Grey
+          dark: "#2C3E50",
         },
+        success: "#A7E9AF", // Minty Success
+        warning: "#FFD3B6", // Peachy Warning
+        error: "#FFCBC7", // Rosy Error
+        info: "#D4F0F0", // Aqua Info
         // Dark mode colors
         "background-dark": {
-          DEFAULT: "#1A202C",
-          card: "#2D3748",
-          hover: "#374151",
+          DEFAULT: "#2D2A32", // Charcoal with purple tint
+          card: "#1F1D24",
+          hover: "#3A3740",
         },
       },
       fontFamily: {
-        display: ["Nunito", "Be Vietnam Pro", "sans-serif"],
+        display: ["Quicksand", "Nunito", "Be Vietnam Pro", "sans-serif"],
+        body: ["Nunito", "sans-serif"],
       },
       borderRadius: {
         DEFAULT: "1rem",
@@ -50,15 +55,25 @@ export default {
         "2xl": "2.5rem",
         "3xl": "24px",
         "4xl": "32px",
+        "5xl": "40px",
+        pill: "9999px",
         full: "9999px",
       },
       boxShadow: {
+        // 🎨 Solid Pop Shadows (Kawaii Style)
+        solid: "4px 4px 0px 0px #E2E8F0",
+        "solid-sm": "2px 2px 0px 0px #E2E8F0",
+        "solid-lg": "6px 6px 0px 0px #E2E8F0",
+        "solid-primary": "4px 4px 0px 0px #6FCF97",
+        "solid-primary-hover": "6px 6px 0px 0px #6FCF97",
+        "solid-secondary": "4px 4px 0px 0px #FF9E98",
+        "solid-accent": "4px 4px 0px 0px #D4A5D8",
+        // Button depth shadows
+        "button-depth": "0px 4px 0px 0px #6FCF97",
+        "button-depth-hover": "0px 2px 0px 0px #6FCF97",
+        // Soft shadows
         glow: "0 0 15px rgba(136, 216, 176, 0.5)",
-        "glow-sm": "0 0 10px rgba(136, 216, 176, 0.3)",
-        "glow-lg": "0 0 25px rgba(136, 216, 176, 0.6)",
         soft: "0 10px 40px -10px rgba(136, 216, 176, 0.3)",
-        pop: "4px 4px 0px 0px #7BC6A0",
-        "pop-hover": "6px 6px 0px 0px #7BC6A0",
         glass: "0 8px 32px 0 rgba(31, 38, 135, 0.1)",
         cute: "0 4px 20px rgba(255, 183, 178, 0.25)",
       },

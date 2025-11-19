@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useToast } from "../contexts/ToastContext";
+import { useToast } from "../hooks/useToast";
 import { deckService } from "../services";
+import { motion } from "framer-motion";
+import { ArrowLeft, BookOpen, Sparkles, Globe } from "lucide-react";
 
 export default function CreateDeck() {
   const [formData, setFormData] = useState({
@@ -19,6 +21,23 @@ export default function CreateDeck() {
       ...formData,
       [name]: type === "checkbox" ? checked : value,
     });
+  };
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { staggerChildren: 0.1, delayChildren: 0.2 },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: { type: "spring", stiffness: 200, damping: 20 },
+    },
   };
 
   const handleSubmit = async (e) => {
@@ -46,90 +65,201 @@ export default function CreateDeck() {
   };
 
   return (
-    <div className="relative flex h-auto min-h-screen w-full flex-col font-display bg-background-light dark:bg-background-dark overflow-x-hidden">
-      {/* Top App Bar */}
-      <header className="sticky top-0 z-10 flex items-center bg-background-light dark:bg-background-dark p-4 pb-2 justify-between border-b border-gray-200 dark:border-gray-700">
-        <button
-          onClick={() => navigate("/decks")}
-          className="text-[#111813] dark:text-gray-200 flex size-12 shrink-0 items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-        >
-          <span className="material-symbols-outlined">arrow_back</span>
-        </button>
-        <h2 className="text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center pr-12 text-gray-900 dark:text-white">
-          Tạo Bộ Từ Mới
-        </h2>
-      </header>
+    <motion.div
+      className="relative flex h-auto min-h-screen w-full flex-col font-display bg-[#FEFBF6] dark:bg-[#2D2A32] overflow-x-hidden pb-24"
+      initial="hidden"
+      animate="visible"
+      variants={containerVariants}
+    >
+      {/* Floating Elements */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
+        {["📝", "✏️", "📚", "✨", "🎨", "💡"].map((emoji, i) => (
+          <motion.div
+            key={i}
+            className="absolute text-4xl"
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+            }}
+            animate={{
+              y: [0, -20, 0],
+              rotate: [0, 360],
+              opacity: [0.2, 0.4, 0.2],
+            }}
+            transition={{
+              duration: 8 + Math.random() * 4,
+              repeat: Infinity,
+              delay: Math.random() * 3,
+            }}
+          >
+            {emoji}
+          </motion.div>
+        ))}
+      </div>
+
+      {/* Header */}
+      <motion.header
+        variants={itemVariants}
+        className="sticky top-0 z-10 bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl border-b-4 border-white/50 dark:border-purple-700/30 shadow-soft"
+      >
+        <div className="flex items-center p-4 justify-between max-w-2xl mx-auto">
+          <motion.button
+            onClick={() => navigate("/decks")}
+            className="flex size-12 shrink-0 items-center justify-center rounded-full bg-white dark:bg-gray-800 shadow-soft hover:shadow-pop transition-all"
+            whileHover={{ scale: 1.1, rotate: -10 }}
+            whileTap={{ scale: 0.9 }}
+          >
+            <ArrowLeft className="text-primary" size={24} strokeWidth={2.5} />
+          </motion.button>
+          <h2 className="text-2xl font-black text-gray-900 dark:text-white flex items-center gap-2">
+            <BookOpen className="text-purple-500" size={28} strokeWidth={2.5} />
+            Tạo Bộ Từ Mới
+          </h2>
+          <div className="w-12"></div>
+        </div>
+      </motion.header>
 
       {/* Main Content */}
-      <main className="flex-1 flex flex-col p-4 space-y-6">
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Text Field: Tên Bộ Từ */}
-          <div className="flex flex-col">
-            <label className="flex flex-col min-w-40 flex-1">
-              <p className="text-base font-medium leading-normal pb-2 text-gray-900 dark:text-white">
-                Tên Bộ Từ
-              </p>
-              <input
+      <main className="relative z-10 flex-1 flex flex-col p-4 pt-6">
+        <motion.div
+          variants={itemVariants}
+          className="max-w-2xl mx-auto w-full bg-white dark:bg-gray-800 rounded-[32px] p-8 shadow-pop border-4 border-white/50 dark:border-purple-700/30"
+        >
+          <div className="flex items-center gap-3 mb-6">
+            <motion.div
+              animate={{ rotate: [0, 10, -10, 0] }}
+              transition={{ duration: 2, repeat: Infinity }}
+            >
+              <Sparkles
+                className="text-yellow-500"
+                size={32}
+                strokeWidth={2.5}
+              />
+            </motion.div>
+            <h3 className="text-2xl font-black text-gray-900 dark:text-white">
+              Thông tin bộ từ 📝
+            </h3>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Text Field: Tên Bộ Từ */}
+            <motion.div variants={itemVariants} className="flex flex-col">
+              <label className="block text-sm font-black text-gray-700 dark:text-gray-300 mb-3">
+                📚 Tên Bộ Từ *
+              </label>
+              <motion.input
                 type="text"
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
                 required
-                className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#111813] dark:text-gray-200 focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-[#dbe6df] dark:border-gray-600 bg-white dark:bg-gray-800 focus:border-primary/80 h-14 placeholder:text-gray-400 dark:placeholder:text-gray-500 p-[15px] text-base font-normal leading-normal"
+                className="w-full px-6 py-4 rounded-[20px] border-4 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white font-semibold text-base focus:border-primary dark:focus:border-primary focus:outline-none transition-all placeholder:text-gray-400"
                 placeholder="Ví dụ: 100 từ tiếng Anh thông dụng"
+                whileFocus={{ scale: 1.02, borderColor: "#a855f7" }}
               />
-            </label>
-          </div>
+            </motion.div>
 
-          {/* Text Field: Mô tả */}
-          <div className="flex flex-col">
-            <label className="flex flex-col min-w-40 flex-1">
-              <p className="text-base font-medium leading-normal pb-2 text-gray-900 dark:text-white">
-                Mô tả (Tùy chọn)
-              </p>
-              <textarea
+            {/* Text Field: Mô tả */}
+            <motion.div variants={itemVariants} className="flex flex-col">
+              <label className="block text-sm font-black text-gray-700 dark:text-gray-300 mb-3">
+                ✏️ Mô tả (Tùy chọn)
+              </label>
+              <motion.textarea
                 name="description"
                 value={formData.description}
                 onChange={handleChange}
                 rows={4}
-                className="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-[#111813] dark:text-gray-200 focus:outline-0 focus:ring-2 focus:ring-primary/50 border border-[#dbe6df] dark:border-gray-600 bg-white dark:bg-gray-800 focus:border-primary/80 placeholder:text-gray-400 dark:placeholder:text-gray-500 p-[15px] text-base font-normal leading-normal"
+                className="w-full px-6 py-4 rounded-[20px] border-4 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white font-semibold text-base focus:border-primary dark:focus:border-primary focus:outline-none transition-all placeholder:text-gray-400 resize-none"
                 placeholder="Nhập mô tả cho bộ từ của bạn..."
+                whileFocus={{ scale: 1.02, borderColor: "#a855f7" }}
               />
-            </label>
-          </div>
+            </motion.div>
 
-          {/* Checkbox: Public */}
-          <div className="flex items-start space-x-3">
-            <input
-              type="checkbox"
-              id="is_public"
-              name="is_public"
-              checked={formData.is_public}
-              onChange={handleChange}
-              className="h-5 w-5 rounded border-gray-300 dark:border-gray-600 text-primary focus:ring-primary bg-white dark:bg-gray-800 mt-0.5"
-            />
-            <div className="text-sm">
-              <label
-                htmlFor="is_public"
-                className="font-normal text-gray-700 dark:text-gray-300 cursor-pointer"
+            {/* Toggle Switch: Public */}
+            <motion.div
+              variants={itemVariants}
+              className="flex items-center justify-between p-6 rounded-[20px] bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 border-2 border-blue-200 dark:border-blue-800"
+            >
+              <div className="flex items-center gap-3">
+                <Globe className="text-blue-500" size={24} strokeWidth={2.5} />
+                <div>
+                  <p className="text-base font-black text-gray-900 dark:text-white">
+                    Công khai bộ từ
+                  </p>
+                  <p className="text-sm font-semibold text-gray-600 dark:text-gray-400">
+                    Cho phép người khác sử dụng
+                  </p>
+                </div>
+              </div>
+              <motion.button
+                type="button"
+                onClick={() =>
+                  setFormData({ ...formData, is_public: !formData.is_public })
+                }
+                className={`relative w-16 h-8 rounded-full transition-all ${
+                  formData.is_public
+                    ? "bg-gradient-to-r from-green-400 to-emerald-400 shadow-glow"
+                    : "bg-gray-300 dark:bg-gray-700"
+                }`}
+                whileTap={{ scale: 0.95 }}
               >
-                Công khai bộ từ này để người khác có thể sử dụng
-              </label>
-            </div>
-          </div>
-        </form>
+                <motion.div
+                  className="absolute top-1 w-6 h-6 bg-white rounded-full shadow-soft"
+                  animate={{
+                    left: formData.is_public ? "calc(100% - 28px)" : "4px",
+                  }}
+                  transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                />
+              </motion.button>
+            </motion.div>
+          </form>
+        </motion.div>
       </main>
 
-      {/* Footer with CTA Button */}
-      <footer className="sticky bottom-0 bg-background-light dark:bg-background-dark p-4 pt-2 border-t border-gray-200 dark:border-gray-700">
-        <button
-          onClick={handleSubmit}
-          disabled={loading}
-          className="w-full bg-primary text-background-dark dark:text-background-dark font-bold py-4 px-6 rounded-lg text-lg hover:opacity-90 transition-opacity focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-background-light dark:focus:ring-offset-background-dark focus:ring-primary disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {loading ? "Đang tạo..." : "Tạo Bộ Từ"}
-        </button>
-      </footer>
-    </div>
+      {/* Floating Submit Button */}
+      <motion.div
+        className="fixed bottom-20 left-0 right-0 z-20 px-4"
+        initial={{ y: 100, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ delay: 0.5 }}
+      >
+        <div className="max-w-2xl mx-auto">
+          <motion.button
+            onClick={handleSubmit}
+            disabled={loading}
+            className={`w-full h-16 rounded-full font-black text-xl flex items-center justify-center gap-3 shadow-pop transition-all ${
+              loading
+                ? "bg-gray-300 dark:bg-gray-700 cursor-not-allowed"
+                : "bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 text-white hover:shadow-glow"
+            }`}
+            whileHover={!loading ? { scale: 1.02, y: -3 } : {}}
+            whileTap={!loading ? { scale: 0.98 } : {}}
+          >
+            {loading ? (
+              <>
+                <motion.div
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                >
+                  <Sparkles size={24} />
+                </motion.div>
+                <span>Đang tạo...</span>
+              </>
+            ) : (
+              <>
+                <BookOpen size={24} strokeWidth={2.5} />
+                <span>Tạo Bộ Từ</span>
+                <motion.span
+                  animate={{ scale: [1, 1.3, 1] }}
+                  transition={{ duration: 1.5, repeat: Infinity }}
+                >
+                  ✨
+                </motion.span>
+              </>
+            )}
+          </motion.button>
+        </div>
+      </motion.div>
+    </motion.div>
   );
 }
