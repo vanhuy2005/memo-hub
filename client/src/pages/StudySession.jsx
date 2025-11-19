@@ -416,58 +416,36 @@ export default function StudySession() {
       </main>
 
       {/* Exit Confirmation Dialog */}
-      <AnimatePresence>
-        {showExitDialog && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
-          >
-            <motion.div
-              initial={{ scale: 0.8, y: 20 }}
-              animate={{ scale: 1, y: 0 }}
-              exit={{ scale: 0.8, y: 20 }}
-              className="glass-card rounded-3xl p-8 max-w-sm w-full shadow-glow-lg border-4 border-white/50"
-            >
-              <div className="text-center mb-6">
-                <motion.div
-                  className="text-6xl mb-4"
-                  animate={{ rotate: [0, -10, 10, -10, 0] }}
-                  transition={{ duration: 0.5 }}
-                >
-                  ⚠️
-                </motion.div>
-                <h3 className="text-2xl font-bold text-text-dark dark:text-white mb-3">
-                  {t("study.backToDeck")}?
-                </h3>
-                <p className="text-text-secondary text-base">
-                  Bạn đã học {currentIndex}/{cards.length} thẻ. Tiến độ chưa
-                  lưu sẽ bị mất 😢
-                </p>
-              </div>
-              <div className="flex gap-4">
-                <motion.button
-                  onClick={() => setShowExitDialog(false)}
-                  className="flex-1 btn-primary h-14 text-lg"
-                  whileHover={{ scale: 1.05, y: -2 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  💪 Tiếp tục học
-                </motion.button>
-                <motion.button
-                  onClick={() => navigate("/dashboard")}
-                  className="flex-1 px-4 h-14 bg-gray-200 dark:bg-gray-700 text-text-dark dark:text-white rounded-2xl font-bold hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors shadow-soft text-lg"
-                  whileHover={{ scale: 1.05, y: -2 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  Thoát
-                </motion.button>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </motion.div>
+      {showExitDialog && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 max-w-sm w-full shadow-2xl">
+            <div className="text-center mb-4">
+              <div className="text-5xl mb-3">⚠️</div>
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+                {t("study.backToDeck")}?
+              </h3>
+              <p className="text-gray-600 dark:text-gray-400 text-sm">
+                Bạn đã học {currentIndex}/{cards.length} thẻ. Tiến độ chưa lưu
+                sẽ bị mất.
+              </p>
+            </div>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowExitDialog(false)}
+                className="flex-1 px-4 py-3 bg-green-600 hover:bg-green-700 text-white rounded-xl font-bold transition-colors"
+              >
+                Tiếp tục học
+              </button>
+              <button
+                onClick={() => navigate("/dashboard")}
+                className="flex-1 px-4 py-3 bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white rounded-xl font-bold hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+              >
+                Thoát
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
   );
 }

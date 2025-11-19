@@ -3,11 +3,11 @@ import { motion, useMotionValue, useTransform } from "framer-motion";
 
 export default function Flashcard({ card, onFlip, isFlipped }) {
   const [isHovered, setIsHovered] = useState(false);
-  
+
   // Parallax tilt effect
   const x = useMotionValue(0);
   const y = useMotionValue(0);
-  
+
   const rotateX = useTransform(y, [-100, 100], [10, -10]);
   const rotateY = useTransform(x, [-100, 100], [-10, 10]);
 
@@ -41,14 +41,16 @@ export default function Flashcard({ card, onFlip, isFlipped }) {
       return {
         label: "Đã thuộc",
         emoji: "⭐",
-        color: "from-green-100 to-emerald-100 dark:from-green-900/30 dark:to-emerald-900/30",
+        color:
+          "from-green-100 to-emerald-100 dark:from-green-900/30 dark:to-emerald-900/30",
         badge: "bg-green-500",
       };
     }
     return {
       label: "Đang học",
       emoji: "📚",
-      color: "from-yellow-100 to-amber-100 dark:from-yellow-900/30 dark:to-amber-900/30",
+      color:
+        "from-yellow-100 to-amber-100 dark:from-yellow-900/30 dark:to-amber-900/30",
       badge: "bg-yellow-500",
     };
   };
