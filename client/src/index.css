@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -86,5 +86,15 @@
   /* Glow Text */
   .text-glow {
     text-shadow: 0 0 10px rgba(136, 216, 176, 0.5);
+  }
+
+  /* 3D Flip Card Utilities */
+  .backface-hidden {
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+  }
+
+  .perspective-1000 {
+    perspective: 1000px;
   }
 }
