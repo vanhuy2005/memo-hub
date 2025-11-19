@@ -1,10 +1,12 @@
 import { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { useToast } from "../contexts/ToastContext";
 import { cardService } from "../services";
 
 export default function CreateCard() {
   const { deckId, cardId } = useParams();
   const navigate = useNavigate();
+  const { success, error } = useToast();
   const [formData, setFormData] = useState({
     deck_id: deckId,
     front_content: "",
@@ -26,12 +28,12 @@ export default function CreateCard() {
         pronunciation: card.pronunciation || "",
         example_sentence: card.example_sentence || "",
       });
-    } catch (error) {
-      console.error("Error loading card:", error);
-      alert("Không thể tải thông tin thẻ");
+    } catch (err) {
+      console.error("Error loading card:", err);
+      error("😢 Không thể tải thông tin thẻ");
       navigate(`/decks/${deckId}`);
     }
-  }, [cardId, deckId, navigate]);
+  }, [cardId, deckId, navigate, error]);
 
   useEffect(() => {
     if (cardId) {
@@ -51,7 +53,7 @@ export default function CreateCard() {
     e.preventDefault();
 
     if (!formData.front_content.trim() || !formData.back_content.trim()) {
-      alert("Vui lòng nhập đầy đủ nội dung mặt trước và mặt sau");
+      error("✏️ Vui lòng nhập đầy đủ nội dung mặt trước và mặt sau");
       return;
     }
 
@@ -59,13 +61,17 @@ export default function CreateCard() {
     try {
       if (isEditing) {
         await cardService.updateCard(cardId, formData);
+        success("✨ Cập nhật thẻ thành công!");
       } else {
         await cardService.createCard(formData);
+        success("✨ Tạo thẻ thành công!");
       }
-      navigate(`/decks/${deckId}`);
-    } catch (error) {
-      console.error("Error saving card:", error);
-      alert("Không thể lưu thẻ. Vui lòng thử lại.");
+      setTimeout(() => navigate(`/decks/${deckId}`), 500);
+    } catch (err) {
+      console.error("Error saving card:", err);
+      error(
+        err.response?.data?.message || "😢 Không thể lưu thẻ. Vui lòng thử lại."
+      );
     } finally {
       setLoading(false);
     }
@@ -75,7 +81,7 @@ export default function CreateCard() {
     e.preventDefault();
 
     if (!formData.front_content.trim() || !formData.back_content.trim()) {
-      alert("Vui lòng nhập đầy đủ nội dung mặt trước và mặt sau");
+      error("✏️ Vui lòng nhập đầy đủ nội dung mặt trước và mặt sau");
       return;
     }
 
@@ -90,10 +96,12 @@ export default function CreateCard() {
         pronunciation: "",
         example_sentence: "",
       });
-      alert("Đã thêm thẻ thành công!");
-    } catch (error) {
-      console.error("Error creating card:", error);
-      alert("Không thể tạo thẻ. Vui lòng thử lại.");
+      success("✨ Đã thêm thẻ thành công! Tiếp tục thêm thẻ mới nhé 💖");
+    } catch (err) {
+      console.error("Error creating card:", err);
+      error(
+        err.response?.data?.message || "😢 Không thể tạo thẻ. Vui lòng thử lại."
+      );
     } finally {
       setLoading(false);
     }

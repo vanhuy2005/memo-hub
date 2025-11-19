@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
+import { useToast } from "../contexts/ToastContext";
 import { deckService, cardService } from "../services";
 import { useTranslation } from "react-i18next";
 import {
@@ -16,6 +17,7 @@ export default function DeckDetail() {
   const { deckId } = useParams();
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const { success, error } = useToast();
   const [deck, setDeck] = useState(null);
   const [cards, setCards] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -30,14 +32,14 @@ export default function DeckDetail() {
       ]);
       setDeck(deckData.data.deck);
       setCards(cardsData.data.cards);
-    } catch (error) {
-      console.error("Error loading deck details:", error);
-      alert("Không thể tải thông tin bộ từ");
+    } catch (err) {
+      console.error("Error loading deck details:", err);
+      error("😢 Không thể tải thông tin bộ từ");
       navigate("/decks");
     } finally {
       setLoading(false);
     }
-  }, [deckId, navigate]);
+  }, [deckId, navigate, error]);
 
   useEffect(() => {
     loadDeckDetails();
@@ -49,9 +51,10 @@ export default function DeckDetail() {
       setCards(cards.filter((card) => card._id !== cardId));
       setShowDeleteModal(false);
       setDeletingCard(null);
-    } catch (error) {
-      console.error("Error deleting card:", error);
-      alert("Không thể xóa thẻ");
+      success("✨ Đã xóa thẻ thành công!");
+    } catch (err) {
+      console.error("Error deleting card:", err);
+      error(err.response?.data?.message || "😢 Không thể xóa thẻ");
     }
   };
 

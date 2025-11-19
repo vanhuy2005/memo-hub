@@ -63,19 +63,37 @@ export default function Dashboard() {
       {/* Celebration Modal */}
       {showCelebration && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm animate-fadeIn">
-          <div className="bg-white dark:bg-gray-800 rounded-3xl p-8 shadow-2xl max-w-sm mx-4 text-center animate-bounce">
-            <div className="text-7xl mb-4">🎉</div>
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+          <div className="bg-gradient-to-br from-pink-50 via-purple-50 to-blue-50 dark:from-pink-900/30 dark:via-purple-900/30 dark:to-blue-900/30 rounded-3xl p-8 shadow-2xl max-w-sm mx-4 text-center animate-bounce border-4 border-pink-200 dark:border-pink-800">
+            <div className="text-7xl mb-4 animate-bounce">🎉</div>
+            <h2 className="text-2xl font-bold bg-gradient-to-r from-pink-600 to-purple-600 bg-clip-text text-transparent mb-2">
               {t("study.congratulations")}
             </h2>
-            <p className="text-gray-600 dark:text-gray-400">
+            <p className="text-gray-700 dark:text-gray-300 font-semibold">
               {t("study.completedSession")}
             </p>
-            <div className="mt-6 flex justify-center gap-2">
-              <span className="text-4xl">⭐</span>
-              <span className="text-4xl">🌟</span>
-              <span className="text-4xl">✨</span>
+            <div className="mt-6 flex justify-center gap-3">
+              <span
+                className="text-4xl animate-bounce"
+                style={{ animationDelay: "0ms" }}
+              >
+                ⭐
+              </span>
+              <span
+                className="text-4xl animate-bounce"
+                style={{ animationDelay: "150ms" }}
+              >
+                🌟
+              </span>
+              <span
+                className="text-4xl animate-bounce"
+                style={{ animationDelay: "300ms" }}
+              >
+                ✨
+              </span>
             </div>
+            <p className="mt-4 text-sm text-pink-600 dark:text-pink-400 font-bold">
+              Bạn thật tuyệt vời! 💖
+            </p>
           </div>
         </div>
       )}
@@ -90,10 +108,10 @@ export default function Dashboard() {
             <p className="text-gray-600 dark:text-gray-400 text-sm font-medium leading-normal pt-1 flex items-center gap-1">
               <Flame
                 size={18}
-                className="text-green-600 dark:text-green-400"
-                fill="currentColor"
+                className="text-orange-500 dark:text-orange-400"
+                strokeWidth={2.5}
               />
-              {stats?.stats?.current_streak || 0} {t("dashboard.days")}
+              {stats?.stats?.current_streak || 0} {t("dashboard.days")} streak
             </p>
           </div>
           <Link
@@ -113,7 +131,7 @@ export default function Dashboard() {
               <Rocket
                 size={36}
                 className="text-green-600 dark:text-green-400"
-                strokeWidth={2}
+                strokeWidth={2.5}
               />
               <h3 className="text-xl font-bold text-gray-800 dark:text-white">
                 {t("dashboard.quickStart")}
@@ -169,6 +187,37 @@ export default function Dashboard() {
           </div>
         )}
 
+        {/* Learning Target Card */}
+        {user?.learning_target && (
+          <div className="mx-4 mt-4 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-2xl p-4 shadow-md border-2 border-purple-200 dark:border-purple-800">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="bg-purple-100 dark:bg-purple-800 p-2 rounded-xl">
+                  <Rocket
+                    size={24}
+                    className="text-purple-600 dark:text-purple-400"
+                    strokeWidth={2.5}
+                  />
+                </div>
+                <div>
+                  <p className="text-xs text-purple-600 dark:text-purple-400 font-semibold">
+                    Mục tiêu học tập
+                  </p>
+                  <p className="text-lg font-bold text-purple-900 dark:text-purple-100">
+                    {user.learning_target}
+                  </p>
+                </div>
+              </div>
+              <Link
+                to="/settings"
+                className="text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 text-sm font-semibold"
+              >
+                Thay đổi →
+              </Link>
+            </div>
+          </div>
+        )}
+
         {/* Main Action Card */}
         <div className="p-4">
           <div className="flex flex-col items-stretch justify-start rounded-xl bg-green-600 dark:bg-green-700 shadow-lg">
@@ -186,7 +235,7 @@ export default function Dashboard() {
                   className="flex w-full max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-14 px-6 bg-white text-green-600 text-base font-bold leading-normal shadow-xl hover:shadow-2xl hover:scale-105 transition-all"
                 >
                   <span className="truncate flex items-center gap-2">
-                    <School size={24} />
+                    <School size={24} strokeWidth={2.5} />
                     {t("dashboard.studyNow").toUpperCase()}
                   </span>
                 </Link>
@@ -199,20 +248,28 @@ export default function Dashboard() {
         <div className="grid grid-cols-2 gap-4 p-4">
           <div className="bg-green-50 dark:bg-gray-800 rounded-xl p-4 shadow-md border-2 border-green-200 dark:border-gray-600">
             <p className="text-sm font-semibold text-green-700 dark:text-green-400 flex items-center gap-1">
-              <BookOpen size={18} />
+              <BookOpen size={18} strokeWidth={2.5} />
               {t("dashboard.studiedToday")}
             </p>
             <p className="text-4xl font-bold mt-2 text-gray-800 dark:text-white">
               {stats?.stats?.cards_studied_today || 0}
             </p>
             <p className="text-xs text-gray-600 dark:text-gray-400 mt-1 font-medium">
-              {t("dashboard.greeting")}
+              {(() => {
+                const studied = stats?.stats?.cards_studied_today || 0;
+                const goal = user?.daily_goal || 20;
+                const remaining = Math.max(0, goal - studied);
+                if (studied >= goal) {
+                  return `🎉 Đã hoàn thành mục tiêu!`;
+                }
+                return `Còn ${remaining} thẻ nữa để đạt mục tiêu`;
+              })()}
             </p>
           </div>
 
           <div className="bg-green-50 dark:bg-gray-800 rounded-xl p-4 shadow-md border-2 border-green-200 dark:border-gray-600">
             <p className="text-sm font-semibold text-green-700 dark:text-green-400 flex items-center gap-1">
-              <Clock size={18} />
+              <Clock size={18} strokeWidth={2.5} />
               {t("dashboard.cardsDue")}
             </p>
             <p className="text-4xl font-bold mt-2 text-gray-800 dark:text-white">
@@ -225,7 +282,7 @@ export default function Dashboard() {
 
           <div className="bg-green-50 dark:bg-gray-800 rounded-xl p-4 shadow-md border-2 border-green-200 dark:border-gray-600">
             <p className="text-sm font-semibold text-green-700 dark:text-green-400 flex items-center gap-1">
-              <LayoutDashboard size={18} />
+              <LayoutDashboard size={18} strokeWidth={2.5} />
               {t("dashboard.totalCards")}
             </p>
             <p className="text-4xl font-bold mt-2 text-gray-800 dark:text-white">
@@ -238,7 +295,7 @@ export default function Dashboard() {
 
           <div className="bg-green-50 dark:bg-gray-800 rounded-xl p-4 shadow-md border-2 border-green-200 dark:border-gray-600">
             <p className="text-sm font-semibold text-green-700 dark:text-green-400 flex items-center gap-1">
-              <Trophy size={18} />
+              <Trophy size={18} strokeWidth={2.5} />
               {t("dashboard.masteredCards")}
             </p>
             <p className="text-4xl font-bold mt-2 text-gray-800 dark:text-white">

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
+import { useToast } from "../contexts/ToastContext";
 import { authService } from "../services";
 import { useTranslation } from "react-i18next";
 import { ArrowLeft } from "lucide-react";
@@ -9,6 +10,7 @@ export default function Settings() {
   const navigate = useNavigate();
   const { user, updateUser } = useAuth();
   const { t, i18n } = useTranslation();
+  const { success, error } = useToast();
   const [settings, setSettings] = useState({
     learning_target: "",
     daily_goal: 20,
@@ -43,12 +45,15 @@ export default function Settings() {
         updateUser(response.data.user);
         // Change language dynamically
         i18n.changeLanguage(settings.language);
-        alert(t("profile.changesSaved"));
-        navigate("/profile");
+        success("✨ " + t("profile.changesSaved"));
+        setTimeout(() => navigate("/profile"), 500);
       }
-    } catch (error) {
-      console.error("Error saving settings:", error);
-      alert(t("common.loading"));
+    } catch (err) {
+      console.error("Error saving settings:", err);
+      error(
+        err.response?.data?.message ||
+          "Không thể lưu cài đặt. Vui lòng thử lại."
+      );
     } finally {
       setLoading(false);
     }

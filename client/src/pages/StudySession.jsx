@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useToast } from "../contexts/ToastContext";
 import { studyService } from "../services";
 import { useTranslation } from "react-i18next";
 import { Activity, Eye, X } from "lucide-react";
@@ -13,6 +14,7 @@ export default function StudySession() {
   const [showExitDialog, setShowExitDialog] = useState(false);
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const { error: showError } = useToast();
   const { state } = useLocation();
   const deckId = state?.deckId; // Lấy deckId từ navigation state
 
@@ -59,23 +61,26 @@ export default function StudySession() {
     try {
       const data = await studyService.getStudySession(50, deckId);
       if (data.data.cards.length === 0) {
-        alert(
+        showError(
           deckId
-            ? "Deck này không có thẻ nào cần ôn tập!"
-            : "Không có thẻ nào cần ôn tập hôm nay!"
+            ? "🎉 Deck này không có thẻ nào cần ôn tập!"
+            : "🎉 Không có thẻ nào cần ôn tập hôm nay!"
         );
-        navigate(deckId ? `/decks/${deckId}` : "/dashboard");
+        setTimeout(
+          () => navigate(deckId ? `/decks/${deckId}` : "/dashboard"),
+          1000
+        );
         return;
       }
       setCards(data.data.cards);
-    } catch (error) {
-      console.error("Error loading study session:", error);
-      alert("Không thể tải phiên học. Vui lòng thử lại.");
+    } catch (err) {
+      console.error("Error loading study session:", err);
+      showError("😢 Không thể tải phiên học. Vui lòng thử lại.");
       navigate(deckId ? `/decks/${deckId}` : "/dashboard");
     } finally {
       setLoading(false);
     }
-  }, [navigate, deckId]);
+  }, [navigate, deckId, showError]);
 
   useEffect(() => {
     loadStudySession();
@@ -165,9 +170,9 @@ export default function StudySession() {
           navigate("/dashboard", { state: { sessionComplete: true } });
         }
       }, 1500);
-    } catch (error) {
-      console.error("Error reviewing card:", error);
-      alert("Có lỗi xảy ra. Vui lòng thử lại.");
+    } catch (err) {
+      console.error("Error reviewing card:", err);
+      showError("😢 Có lỗi xảy ra. Vui lòng thử lại.");
       setReviewing(false);
     }
   };
@@ -197,7 +202,7 @@ export default function StudySession() {
             onClick={() => setShowExitDialog(true)}
             className="text-gray-800 dark:text-gray-200 flex size-11 shrink-0 items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
           >
-            <X size={28} strokeWidth={2} />
+            <X size={28} strokeWidth={2.5} />
           </button>
           <h1 className="text-gray-900 dark:text-gray-100 text-xl font-bold leading-tight tracking-[-0.015em] flex-1 text-center">
             📖 {t("study.startStudy")}
@@ -211,7 +216,7 @@ export default function StudySession() {
                 <Activity
                   size={18}
                   className="text-green-600 dark:text-green-400"
-                  strokeWidth={2}
+                  strokeWidth={2.5}
                 />
                 {t("statistics.overview")}
               </p>
@@ -279,7 +284,7 @@ export default function StudySession() {
                 onClick={handleFlip}
                 className="flex min-w-[84px] max-w-full cursor-pointer items-center justify-center gap-2 overflow-hidden rounded-2xl h-16 px-6 flex-1 bg-green-600 hover:bg-green-700 text-white text-lg font-bold leading-normal tracking-[0.015em] w-full shadow-xl hover:shadow-2xl hover:scale-105 transition-all"
               >
-                <Eye size={24} strokeWidth={2} />
+                <Eye size={24} strokeWidth={2.5} />
                 <span className="truncate">{t("study.showAnswer")}</span>
               </button>
             </div>
